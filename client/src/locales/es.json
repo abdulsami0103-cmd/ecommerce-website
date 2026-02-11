@@ -1,0 +1,86 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrio un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "viewAll": "Ver Todo",
+    "noResults": "No se encontraron resultados"
+  },
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "categories": "Categorias",
+    "vendors": "Vendedores",
+    "cart": "Carrito",
+    "account": "Cuenta",
+    "login": "Iniciar Sesion",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesion"
+  },
+  "auth": {
+    "login": "Iniciar Sesion",
+    "register": "Crear Cuenta",
+    "email": "Correo Electronico",
+    "password": "Contrasena",
+    "confirmPassword": "Confirmar Contrasena",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "forgotPassword": "Olvidaste tu contrasena?",
+    "noAccount": "No tienes cuenta?",
+    "hasAccount": "Ya tienes cuenta?",
+    "loginSuccess": "Bienvenido de vuelta!",
+    "registerSuccess": "Cuenta creada exitosamente!"
+  },
+  "product": {
+    "addToCart": "Agregar al Carrito",
+    "buyNow": "Comprar Ahora",
+    "outOfStock": "Agotado",
+    "inStock": "En Stock",
+    "price": "Precio",
+    "quantity": "Cantidad",
+    "description": "Descripcion",
+    "reviews": "Resenas",
+    "relatedProducts": "Productos Relacionados"
+  },
+  "cart": {
+    "title": "Carrito de Compras",
+    "empty": "Tu carrito esta vacio",
+    "subtotal": "Subtotal",
+    "shipping": "Envio",
+    "tax": "Impuesto",
+    "total": "Total",
+    "checkout": "Proceder al Pago",
+    "continueShopping": "Seguir Comprando"
+  },
+  "checkout": {
+    "title": "Pago",
+    "shipping": "Informacion de Envio",
+    "payment": "Pago",
+    "review": "Revisar Pedido",
+    "placeOrder": "Realizar Pedido"
+  },
+  "vendor": {
+    "dashboard": "Panel",
+    "products": "Productos",
+    "orders": "Pedidos",
+    "analytics": "Estadisticas",
+    "settings": "Configuracion",
+    "addProduct": "Agregar Producto",
+    "totalRevenue": "Ingresos Totales",
+    "totalOrders": "Pedidos Totales",
+    "pendingOrders": "Pedidos Pendientes"
+  },
+  "footer": {
+    "aboutUs": "Sobre Nosotros",
+    "contact": "Contacto",
+    "terms": "Terminos de Servicio",
+    "privacy": "Politica de Privacidad",
+    "copyright": "Todos los derechos reservados"
+  }
+}

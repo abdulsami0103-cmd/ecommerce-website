@@ -1,0 +1,29 @@
+{
+  "errors": {
+    "unauthorized": "Not authorized to access this route",
+    "notFound": "Resource not found",
+    "invalidCredentials": "Invalid credentials",
+    "emailExists": "Email already registered",
+    "serverError": "Server error",
+    "validationError": "Validation error"
+  },
+  "auth": {
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful",
+    "logoutSuccess": "Logout successful",
+    "passwordResetSent": "Password reset email sent"
+  },
+  "product": {
+    "created": "Product created successfully",
+    "updated": "Product updated successfully",
+    "deleted": "Product deleted successfully"
+  },
+  "order": {
+    "created": "Order placed successfully",
+    "updated": "Order updated successfully"
+  },
+  "vendor": {
+    "registered": "Vendor registration submitted",
+    "approved": "Vendor approved successfully"
+  }
+}

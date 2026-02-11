@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Redstone Store</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <style>
+        .cart-page {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 5rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .empty-cart h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty-cart p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .coupon-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .coupon-form input {
+            flex: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-page="cart">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <span>REDSTONE</span> STORE
+            </a>
+
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="products.html" class="nav-link">Products</a>
+                <a href="products.html?category=electronics" class="nav-link">Electronics</a>
+                <a href="products.html?category=fashion" class="nav-link">Fashion</a>
+                <a href="products.html?category=digital" class="nav-link">Digital</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="wishlist.html" class="icon-btn">
+                    <i class="far fa-heart"></i>
+                    <span class="badge wishlist-count" style="display: none;">0</span>
+                </a>
+
+                <a href="cart.html" class="icon-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge cart-count" style="display: none;">0</span>
+                </a>
+
+                <a href="login.html" class="icon-btn">
+                    <i class="far fa-user"></i>
+                </a>
+
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="cart-page">
+        <div class="container">
+            <h1 style="margin-bottom: 30px;">Shopping Cart</h1>
+
+            <div class="cart-layout">
+                <!-- Cart Items -->
+                <div>
+                    <div id="cart-items">
+                        <!-- Cart items loaded by JS -->
+                    </div>
+
+                    <div id="empty-cart" class="empty-cart card" style="display: none;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h2>Your cart is empty</h2>
+                        <p>Looks like you haven't added anything to your cart yet.</p>
+                        <a href="products.html" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div id="cart-summary" class="cart-summary">
+                    <h3 class="cart-summary-title">Order Summary</h3>
+
+                    <div class="cart-summary-row">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">Rs.0</span>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Shipping</span>
+                        <span id="cart-shipping">Rs.0</span>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Tax</span>
+                        <span>Calculated at checkout</span>
+                    </div>
+
+                    <div class="cart-summary-row total">
+                        <span>Total</span>
+                        <span class="value" id="cart-total">Rs.0</span>
+                    </div>
+
+                    <a href="checkout.html" class="btn btn-primary btn-block btn-lg mt-3">
+                        <i class="fas fa-lock"></i> Proceed to Checkout
+                    </a>
+
+                    <div class="coupon-form">
+                        <input type="text" class="form-input" placeholder="Coupon code">
+                        <button class="btn btn-secondary">Apply</button>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: center;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                            <i class="fas fa-shield-alt"></i> Secure checkout
+                        </p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">
+                            <i class="fas fa-truck"></i> Free shipping on orders over Rs.5000
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border: none; padding: 0;">
+                <p>&copy; 2024 Redstone Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "MarketPlace",
+  "short_name": "MarketPlace",
+  "description": "Multivendor E-commerce Platform",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#0284c7",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [],
+  "categories": ["business", "shopping"]
+}

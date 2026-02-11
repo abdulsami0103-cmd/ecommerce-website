@@ -1,0 +1,86 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "viewAll": "Voir Tout",
+    "noResults": "Aucun resultat trouve"
+  },
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "categories": "Categories",
+    "vendors": "Vendeurs",
+    "cart": "Panier",
+    "account": "Compte",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Deconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Creer un Compte",
+    "email": "Email",
+    "password": "Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "firstName": "Prenom",
+    "lastName": "Nom",
+    "forgotPassword": "Mot de passe oublie?",
+    "noAccount": "Pas de compte?",
+    "hasAccount": "Vous avez deja un compte?",
+    "loginSuccess": "Bon retour!",
+    "registerSuccess": "Compte cree avec succes!"
+  },
+  "product": {
+    "addToCart": "Ajouter au Panier",
+    "buyNow": "Acheter Maintenant",
+    "outOfStock": "Rupture de Stock",
+    "inStock": "En Stock",
+    "price": "Prix",
+    "quantity": "Quantite",
+    "description": "Description",
+    "reviews": "Avis",
+    "relatedProducts": "Produits Similaires"
+  },
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "tax": "Taxes",
+    "total": "Total",
+    "checkout": "Passer la Commande",
+    "continueShopping": "Continuer les Achats"
+  },
+  "checkout": {
+    "title": "Paiement",
+    "shipping": "Informations de Livraison",
+    "payment": "Paiement",
+    "review": "Verifier la Commande",
+    "placeOrder": "Passer la Commande"
+  },
+  "vendor": {
+    "dashboard": "Tableau de Bord",
+    "products": "Produits",
+    "orders": "Commandes",
+    "analytics": "Statistiques",
+    "settings": "Parametres",
+    "addProduct": "Ajouter un Produit",
+    "totalRevenue": "Revenus Totaux",
+    "totalOrders": "Total des Commandes",
+    "pendingOrders": "Commandes en Attente"
+  },
+  "footer": {
+    "aboutUs": "A Propos",
+    "contact": "Contact",
+    "terms": "Conditions d'Utilisation",
+    "privacy": "Politique de Confidentialite",
+    "copyright": "Tous droits reserves"
+  }
+}

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Redstone Admin</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><span>REDSTONE</span> ADMIN</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="nav-item">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="orders.html" class="nav-item active">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search orders..." id="search-input" oninput="searchOrders()">
+            </div>
+
+            <div class="top-bar-actions">
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=7800ff&color=fff" alt="Admin">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Orders Content -->
+        <div class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Orders</h1>
+                    <p>Manage customer orders</p>
+                </div>
+                <div class="header-stats">
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="pending-count">0</span>
+                        <span class="mini-stat-label">Pending</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="processing-count">0</span>
+                        <span class="mini-stat-label">Processing</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="completed-count">0</span>
+                        <span class="mini-stat-label">Completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="filters-row">
+                    <select id="status-filter" class="form-select" onchange="filterOrders()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    <select id="payment-filter" class="form-select" onchange="filterOrders()">
+                        <option value="">All Payment Methods</option>
+                        <option value="card">Credit Card</option>
+                        <option value="cod">Cash on Delivery</option>
+                        <option value="jazzcash">JazzCash</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+
+                    <select id="date-filter" class="form-select" onchange="filterOrders()">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table">
+                            <!-- Loaded by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="order-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="modal-close" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="order-details">
+                <!-- Loaded by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeOrderModal()">Close</button>
+                <button class="btn btn-primary" onclick="printOrder()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal" id="status-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Order Status</h2>
+                <button class="modal-close" onclick="closeStatusModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Order Status</label>
+                    <select class="form-select" id="new-status">
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes (Optional)</label>
+                    <textarea class="form-textarea" id="status-notes" placeholder="Add notes about this status change..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="updateOrderStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Admin JS -->
+    <script src="../js/admin.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        let currentOrders = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let viewingOrderId = null;
+        let updatingOrderId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+        });
+
+        function loadOrders() {
+            let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+            // If no orders, create sample data
+            if (orders.length === 0) {
+                orders = getSampleOrders();
+                localStorage.setItem('orders', JSON.stringify(orders));
+            }
+
+            currentOrders = orders;
+            updateOrderStats();
+            filterOrders();
+        }
+
+        function getSampleOrders() {
+            return [
+                {
+                    id: 1001,
+                    customer: {
+                        name: 'Ahmed Khan',
+                        email: 'ahmed@example.com',
+                        phone: '+92 300 1234567',
+                        address: '123 Main Street, Lahore',
+                        city: 'Lahore',
+                        country: 'Pakistan'
+                    },
+                    items: [
+                        { name: 'Gaming Laptop Pro', quantity: 1, price: 350000 },
+                        { name: 'Wireless Earbuds', quantity: 2, price: 25000 }
+                    ],
+                    subtotal: 400000,
+                    shipping: 500,
+                    total: 400500,
+                    payment: 'card',
+                    status: 'delivered',
+                    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    notes: ''
+                },
+                {
+                    id: 1002,
+                    customer: {
+                        name: 'Sara Ali',
+                        email: 'sara@example.com',
+                        phone: '+92 321 9876543',
+                        address: '456 Park Avenue, Karachi',
+                        city: 'Karachi',
+                        country: 'Pakistan'
+                    },
+                    items: [
+                        { name: 'Designer Hoodie', quantity: 2, price: 5500 },
+                        { name: 'Smart Watch Pro', quantity: 1, price: 45000 }
+                    ],
+                    subtotal: 56000,
+                    shipping: 300,
+                    total: 56300,
+                    payment: 'cod',
+                    status: 'processing',
+                    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                    notes: ''
+                },
+                {
+                    id: 1003,
+                    customer: {
+                        name: 'Usman Malik',
+                        email: 'usman@example.com',
+                        phone: '+92 333 5551234',
+                        address: '789 Tech Road, Islamabad',
+                        city: 'Islamabad',
+                        country: 'Pakistan'
+                    },
+                    items: [
+                        { name: 'UI Design Course', quantity: 1, price: 15000 }
+                    ],
+                    subtotal: 15000,
+                    shipping: 0,
+                    total: 15000,
+                    payment: 'jazzcash',
+                    status: 'pending',
+                    date: new Date().toISOString(),
+                    notes: 'Digital delivery'
+                }
+            ];
+        }
+
+        function updateOrderStats() {
+            const pending = currentOrders.filter(o => o.status === 'pending').length;
+            const processing = currentOrders.filter(o => o.status === 'processing' || o.status === 'shipped').length;
+            const completed = currentOrders.filter(o => o.status === 'delivered').length;
+
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('processing-count').textContent = processing;
+            document.getElementById('completed-count').textContent = completed;
+        }
+
+        function filterOrders() {
+            let filtered = [...currentOrders];
+
+            // Search filter
+            const search = document.getElementById('search-input').value.toLowerCase();
+            if (search) {
+                filtered = filtered.filter(o =>
+                    o.id.toString().includes(search) ||
+                    o.customer?.name?.toLowerCase().includes(search) ||
+                    o.customer?.email?.toLowerCase().includes(search)
+                );
+            }
+
+            // Status filter
+            const status = document.getElementById('status-filter').value;
+            if (status) {
+                filtered = filtered.filter(o => o.status === status);
+            }
+
+            // Payment filter
+            const payment = document.getElementById('payment-filter').value;
+            if (payment) {
+                filtered = filtered.filter(o => o.payment === payment);
+            }
+
+            // Date filter
+            const dateFilter = document.getElementById('date-filter').value;
+            if (dateFilter) {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                if (dateFilter === 'today') {
+                    filtered = filtered.filter(o => new Date(o.date) >= today);
+                } else if (dateFilter === 'week') {
+                    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    filtered = filtered.filter(o => new Date(o.date) >= weekAgo);
+                } else if (dateFilter === 'month') {
+                    const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                    filtered = filtered.filter(o => new Date(o.date) >= monthAgo);
+                }
+            }
+
+            // Sort by date (newest first)
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            renderOrders(filtered);
+        }
+
+        function searchOrders() {
+            filterOrders();
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('orders-table');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageOrders = orders.slice(start, end);
+
+            if (pageOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #888;">No orders found</td></tr>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            const paymentIcons = {
+                card: '<i class="fas fa-credit-card"></i>',
+                cod: '<i class="fas fa-money-bill"></i>',
+                jazzcash: '<i class="fas fa-mobile-alt"></i>',
+                paypal: '<i class="fab fa-paypal"></i>'
+            };
+
+            tbody.innerHTML = pageOrders.map(order => `
+                <tr>
+                    <td><strong>#${order.id}</strong></td>
+                    <td>
+                        <div class="customer-cell">
+                            <strong>${order.customer?.name || 'Guest'}</strong>
+                            <small>${order.customer?.email || ''}</small>
+                        </div>
+                    </td>
+                    <td>${order.items?.length || 0} items</td>
+                    <td><strong>Rs.${(order.total || 0).toLocaleString()}</strong></td>
+                    <td>
+                        <span class="payment-badge">
+                            ${paymentIcons[order.payment] || ''}
+                            ${order.payment || 'N/A'}
+                        </span>
+                    </td>
+                    <td><span class="status-badge status-${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="viewOrder(${order.id})" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" onclick="openStatusModal(${order.id})" title="Update Status">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination(orders.length);
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span class="page-dots">...</span>';
+                }
+            }
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentOrders.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            filterOrders();
+        }
+
+        function viewOrder(id) {
+            viewingOrderId = id;
+            const order = currentOrders.find(o => o.id === id);
+            if (!order) return;
+
+            const details = document.getElementById('order-details');
+            details.innerHTML = `
+                <div class="order-detail-grid">
+                    <div class="order-detail-section">
+                        <h3><i class="fas fa-info-circle"></i> Order Information</h3>
+                        <div class="detail-row">
+                            <span>Order ID:</span>
+                            <strong>#${order.id}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Date:</span>
+                            <strong>${new Date(order.date).toLocaleString()}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Status:</span>
+                            <span class="status-badge status-${order.status}">${order.status}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Payment:</span>
+                            <strong>${order.payment}</strong>
+                        </div>
+                    </div>
+
+                    <div class="order-detail-section">
+                        <h3><i class="fas fa-user"></i> Customer Information</h3>
+                        <div class="detail-row">
+                            <span>Name:</span>
+                            <strong>${order.customer?.name || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Email:</span>
+                            <strong>${order.customer?.email || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Phone:</span>
+                            <strong>${order.customer?.phone || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Address:</span>
+                            <strong>${order.customer?.address || 'N/A'}, ${order.customer?.city || ''}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3><i class="fas fa-box"></i> Order Items</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${order.items?.map(item => `
+                                <tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>Rs.${item.price?.toLocaleString()}</td>
+                                    <td>Rs.${(item.price * item.quantity).toLocaleString()}</td>
+                                </tr>
+                            `).join('') || '<tr><td colspan="4">No items</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>Rs.${(order.subtotal || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Shipping:</span>
+                        <span>Rs.${(order.shipping || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="total-row total-final">
+                        <span>Total:</span>
+                        <span>Rs.${(order.total || 0).toLocaleString()}</span>
+                    </div>
+                </div>
+
+                ${order.notes ? `
+                    <div class="order-detail-section">
+                        <h3><i class="fas fa-sticky-note"></i> Notes</h3>
+                        <p>${order.notes}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('order-modal').classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.remove('active');
+            viewingOrderId = null;
+        }
+
+        function printOrder() {
+            window.print();
+        }
+
+        function openStatusModal(id) {
+            updatingOrderId = id;
+            const order = currentOrders.find(o => o.id === id);
+            if (order) {
+                document.getElementById('new-status').value = order.status;
+            }
+            document.getElementById('status-modal').classList.add('active');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('status-modal').classList.remove('active');
+            updatingOrderId = null;
+        }
+
+        function updateOrderStatus() {
+            if (!updatingOrderId) return;
+
+            const newStatus = document.getElementById('new-status').value;
+            const notes = document.getElementById('status-notes').value;
+
+            const index = currentOrders.findIndex(o => o.id === updatingOrderId);
+            if (index !== -1) {
+                currentOrders[index].status = newStatus;
+                if (notes) {
+                    currentOrders[index].notes = (currentOrders[index].notes || '') + '\n' + notes;
+                }
+
+                localStorage.setItem('orders', JSON.stringify(currentOrders));
+                closeStatusModal();
+                updateOrderStats();
+                filterOrders();
+                showToast('Order status updated successfully', 'success');
+            }
+        }
+    </script>
+</body>
+</html>

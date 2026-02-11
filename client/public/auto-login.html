@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auto Login</title>
+</head>
+<body>
+  <h2>Logging you in...</h2>
+  <script>
+    // Vendor login
+    localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODFjZWFjZjE1ODczNDczNWQxYmY3NyIsInJvbGUiOiJ2ZW5kb3IiLCJpYXQiOjE3NzAzMDM0ODcsImV4cCI6MTc3MDkwODI4N30.Bp1lJ2qxDPybO0qkcBeebICVgG1k3WEAzhpB2vF6L_c');
+    localStorage.setItem('user', '{"id":"6981ceacf158734735d1bf77","email":"techstore@vendor.com","role":"vendor","profile":{"firstName":"Ali","lastName":"Khan","avatar":""}}');
+    window.location.href = '/vendor/dashboard';
+  </script>
+</body>
+</html>

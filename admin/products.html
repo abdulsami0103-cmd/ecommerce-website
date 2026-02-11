@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Redstone Admin</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><span>REDSTONE</span> ADMIN</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="nav-item active">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products..." id="search-input" oninput="searchProducts()">
+            </div>
+
+            <div class="top-bar-actions">
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=7800ff&color=fff" alt="Admin">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Products Content -->
+        <div class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Products</h1>
+                    <p>Manage your store products</p>
+                </div>
+                <button class="btn btn-primary" onclick="openProductModal()">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="filters-row">
+                    <select id="category-filter" class="form-select" onchange="filterProducts()">
+                        <option value="">All Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="digital">Digital</option>
+                        <option value="home">Home & Living</option>
+                        <option value="sports">Sports</option>
+                        <option value="beauty">Beauty</option>
+                    </select>
+
+                    <select id="stock-filter" class="form-select" onchange="filterProducts()">
+                        <option value="">All Stock Status</option>
+                        <option value="in-stock">In Stock</option>
+                        <option value="low-stock">Low Stock</option>
+                        <option value="out-of-stock">Out of Stock</option>
+                    </select>
+
+                    <select id="sort-filter" class="form-select" onchange="filterProducts()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table">
+                            <!-- Loaded by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Product</h2>
+                <button class="modal-close" onclick="closeProductModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="product-form" onsubmit="saveProduct(event)">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" class="form-input" id="product-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">SKU</label>
+                            <input type="text" class="form-input" id="product-sku">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" id="product-description" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select class="form-select" id="product-category" required>
+                                <option value="">Select Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="fashion">Fashion</option>
+                                <option value="digital">Digital</option>
+                                <option value="home">Home & Living</option>
+                                <option value="sports">Sports</option>
+                                <option value="beauty">Beauty</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" id="product-type">
+                                <option value="physical">Physical Product</option>
+                                <option value="digital">Digital Product</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Price (PKR) *</label>
+                            <input type="number" class="form-input" id="product-price" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Compare at Price</label>
+                            <input type="number" class="form-input" id="product-compare-price" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-input" id="product-stock" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Low Stock Threshold</label>
+                            <input type="number" class="form-input" id="product-low-stock" min="0" value="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="url" class="form-input" id="product-image" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tags (comma separated)</label>
+                        <input type="text" class="form-input" id="product-tags" placeholder="gaming, laptop, new">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="product-featured">
+                            <span>Featured Product</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Product</h2>
+                <button class="modal-close" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this product? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Admin JS -->
+    <script src="../js/admin.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        let currentProducts = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let editingProductId = null;
+        let deletingProductId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+
+            // Check if should open add modal
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('action') === 'add') {
+                openProductModal();
+            }
+        });
+
+        function loadProducts() {
+            let products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+
+            // If no products, initialize with sample data
+            if (products.length === 0) {
+                products = getSampleProducts();
+                localStorage.setItem('adminProducts', JSON.stringify(products));
+            }
+
+            currentProducts = products;
+            filterProducts();
+        }
+
+        function getSampleProducts() {
+            return [
+                {
+                    id: 1,
+                    name: 'Gaming Laptop Pro',
+                    description: 'High-performance gaming laptop with RTX 4080',
+                    category: 'electronics',
+                    type: 'physical',
+                    price: 350000,
+                    comparePrice: 400000,
+                    stock: 15,
+                    lowStock: 5,
+                    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400',
+                    tags: ['gaming', 'laptop', 'new'],
+                    featured: true,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 2,
+                    name: 'Wireless Earbuds',
+                    description: 'Premium wireless earbuds with noise cancellation',
+                    category: 'electronics',
+                    type: 'physical',
+                    price: 25000,
+                    comparePrice: 30000,
+                    stock: 50,
+                    lowStock: 10,
+                    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',
+                    tags: ['audio', 'wireless'],
+                    featured: true,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 3,
+                    name: 'Designer Hoodie',
+                    description: 'Premium cotton hoodie with modern design',
+                    category: 'fashion',
+                    type: 'physical',
+                    price: 5500,
+                    stock: 100,
+                    lowStock: 20,
+                    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',
+                    tags: ['clothing', 'hoodie'],
+                    featured: false,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 4,
+                    name: 'UI Design Course',
+                    description: 'Complete UI/UX design masterclass',
+                    category: 'digital',
+                    type: 'digital',
+                    price: 15000,
+                    comparePrice: 25000,
+                    stock: 999,
+                    lowStock: 0,
+                    image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400',
+                    tags: ['course', 'design'],
+                    featured: true,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 5,
+                    name: 'Smart Watch Pro',
+                    description: 'Advanced smartwatch with health tracking',
+                    category: 'electronics',
+                    type: 'physical',
+                    price: 45000,
+                    stock: 8,
+                    lowStock: 10,
+                    image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400',
+                    tags: ['watch', 'smart'],
+                    featured: false,
+                    createdAt: new Date().toISOString()
+                }
+            ];
+        }
+
+        function filterProducts() {
+            let filtered = [...currentProducts];
+
+            // Search filter
+            const search = document.getElementById('search-input').value.toLowerCase();
+            if (search) {
+                filtered = filtered.filter(p =>
+                    p.name.toLowerCase().includes(search) ||
+                    p.description?.toLowerCase().includes(search) ||
+                    p.sku?.toLowerCase().includes(search)
+                );
+            }
+
+            // Category filter
+            const category = document.getElementById('category-filter').value;
+            if (category) {
+                filtered = filtered.filter(p => p.category === category);
+            }
+
+            // Stock filter
+            const stockFilter = document.getElementById('stock-filter').value;
+            if (stockFilter === 'in-stock') {
+                filtered = filtered.filter(p => p.stock > p.lowStock);
+            } else if (stockFilter === 'low-stock') {
+                filtered = filtered.filter(p => p.stock > 0 && p.stock <= p.lowStock);
+            } else if (stockFilter === 'out-of-stock') {
+                filtered = filtered.filter(p => p.stock === 0);
+            }
+
+            // Sort
+            const sort = document.getElementById('sort-filter').value;
+            if (sort === 'newest') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sort === 'oldest') {
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sort === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sort === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            renderProducts(filtered);
+        }
+
+        function searchProducts() {
+            filterProducts();
+        }
+
+        function renderProducts(products) {
+            const tbody = document.getElementById('products-table');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageProducts = products.slice(start, end);
+
+            if (pageProducts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #888;">No products found</td></tr>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = pageProducts.map(product => {
+                let stockStatus = 'in-stock';
+                let stockLabel = 'In Stock';
+                if (product.stock === 0) {
+                    stockStatus = 'out-of-stock';
+                    stockLabel = 'Out of Stock';
+                } else if (product.stock <= product.lowStock) {
+                    stockStatus = 'low-stock';
+                    stockLabel = 'Low Stock';
+                }
+
+                return `
+                    <tr>
+                        <td><input type="checkbox" class="product-checkbox" data-id="${product.id}"></td>
+                        <td>
+                            <div class="product-cell">
+                                <img src="${product.image || 'https://via.placeholder.com/50'}" alt="${product.name}">
+                                <div>
+                                    <strong>${product.name}</strong>
+                                    <small>${product.sku || 'No SKU'}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="category-badge">${product.category}</span></td>
+                        <td>
+                            <strong>Rs.${product.price.toLocaleString()}</strong>
+                            ${product.comparePrice ? `<br><small style="color: #888; text-decoration: line-through;">Rs.${product.comparePrice.toLocaleString()}</small>` : ''}
+                        </td>
+                        <td>${product.stock}</td>
+                        <td><span class="status-badge status-${stockStatus}">${stockLabel}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn" onclick="editProduct(${product.id})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn action-btn-danger" onclick="deleteProduct(${product.id})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(products.length);
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span class="page-dots">...</span>';
+                }
+            }
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentProducts.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            filterProducts();
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all').checked;
+            document.querySelectorAll('.product-checkbox').forEach(cb => cb.checked = selectAll);
+        }
+
+        function openProductModal(productId = null) {
+            editingProductId = productId;
+            const modal = document.getElementById('product-modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('product-form');
+
+            form.reset();
+
+            if (productId) {
+                title.textContent = 'Edit Product';
+                const product = currentProducts.find(p => p.id === productId);
+                if (product) {
+                    document.getElementById('product-name').value = product.name;
+                    document.getElementById('product-sku').value = product.sku || '';
+                    document.getElementById('product-description').value = product.description || '';
+                    document.getElementById('product-category').value = product.category;
+                    document.getElementById('product-type').value = product.type || 'physical';
+                    document.getElementById('product-price').value = product.price;
+                    document.getElementById('product-compare-price').value = product.comparePrice || '';
+                    document.getElementById('product-stock').value = product.stock;
+                    document.getElementById('product-low-stock').value = product.lowStock || 10;
+                    document.getElementById('product-image').value = product.image || '';
+                    document.getElementById('product-tags').value = product.tags?.join(', ') || '';
+                    document.getElementById('product-featured').checked = product.featured || false;
+                }
+            } else {
+                title.textContent = 'Add Product';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('active');
+            editingProductId = null;
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+
+            const product = {
+                id: editingProductId || Date.now(),
+                name: document.getElementById('product-name').value,
+                sku: document.getElementById('product-sku').value,
+                description: document.getElementById('product-description').value,
+                category: document.getElementById('product-category').value,
+                type: document.getElementById('product-type').value,
+                price: parseInt(document.getElementById('product-price').value),
+                comparePrice: parseInt(document.getElementById('product-compare-price').value) || null,
+                stock: parseInt(document.getElementById('product-stock').value),
+                lowStock: parseInt(document.getElementById('product-low-stock').value),
+                image: document.getElementById('product-image').value,
+                tags: document.getElementById('product-tags').value.split(',').map(t => t.trim()).filter(t => t),
+                featured: document.getElementById('product-featured').checked,
+                createdAt: editingProductId ? currentProducts.find(p => p.id === editingProductId)?.createdAt : new Date().toISOString()
+            };
+
+            if (editingProductId) {
+                const index = currentProducts.findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    currentProducts[index] = product;
+                }
+            } else {
+                currentProducts.push(product);
+            }
+
+            localStorage.setItem('adminProducts', JSON.stringify(currentProducts));
+            closeProductModal();
+            filterProducts();
+            showToast(editingProductId ? 'Product updated successfully' : 'Product added successfully', 'success');
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        function deleteProduct(id) {
+            deletingProductId = id;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('active');
+            deletingProductId = null;
+        }
+
+        function confirmDelete() {
+            if (deletingProductId) {
+                currentProducts = currentProducts.filter(p => p.id !== deletingProductId);
+                localStorage.setItem('adminProducts', JSON.stringify(currentProducts));
+                closeDeleteModal();
+                filterProducts();
+                showToast('Product deleted successfully', 'success');
+            }
+        }
+    </script>
+</body>
+</html>

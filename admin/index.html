@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Redstone Admin</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><span>REDSTONE</span> ADMIN</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="nav-item">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+
+            <div class="top-bar-actions">
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=7800ff&color=fff" alt="Admin">
+                    <span id="admin-name">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="content">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's what's happening with your store.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #7800ff, #5a00cc);">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-revenue">Rs.0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #00d4ff, #00a8cc);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-orders">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #00ff88, #00cc6a);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-products">0</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="total-customers">0</h3>
+                        <p>Total Customers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Tables Row -->
+            <div class="dashboard-grid">
+                <!-- Recent Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Orders</h2>
+                        <a href="orders.html" class="btn btn-sm">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-orders">
+                                <!-- Loaded by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Products -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Top Products</h2>
+                        <a href="products.html" class="btn btn-sm">View All</a>
+                    </div>
+                    <div class="top-products" id="top-products">
+                        <!-- Loaded by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                    <a href="products.html?action=add" class="quick-action-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Product</span>
+                    </a>
+                    <a href="orders.html" class="quick-action-btn">
+                        <i class="fas fa-truck"></i>
+                        <span>Process Orders</span>
+                    </a>
+                    <a href="customers.html" class="quick-action-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>View Customers</span>
+                    </a>
+                    <a href="../index.html" target="_blank" class="quick-action-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>View Store</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin JS -->
+    <script src="../js/admin.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Load dashboard data
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardStats();
+            loadRecentOrders();
+            loadTopProducts();
+
+            // Set admin name
+            const admin = JSON.parse(localStorage.getItem('currentAdmin') || '{}');
+            document.getElementById('admin-name').textContent = admin.name || 'Admin';
+        });
+
+        function loadDashboardStats() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+            const customers = JSON.parse(localStorage.getItem('users') || '[]');
+
+            // Calculate total revenue
+            const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+
+            document.getElementById('total-revenue').textContent = 'Rs.' + totalRevenue.toLocaleString();
+            document.getElementById('total-orders').textContent = orders.length;
+            document.getElementById('total-products').textContent = products.length;
+            document.getElementById('total-customers').textContent = customers.length;
+        }
+
+        function loadRecentOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const recentOrders = orders.slice(-5).reverse();
+
+            const tbody = document.getElementById('recent-orders');
+
+            if (recentOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #888;">No orders yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = recentOrders.map(order => `
+                <tr>
+                    <td>#${order.id}</td>
+                    <td>${order.customer?.name || 'Guest'}</td>
+                    <td>Rs.${(order.total || 0).toLocaleString()}</td>
+                    <td><span class="status-badge status-${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadTopProducts() {
+            const products = JSON.parse(localStorage.getItem('adminProducts') || '[]');
+            const topProducts = products.slice(0, 5);
+
+            const container = document.getElementById('top-products');
+
+            if (topProducts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 30px; color: #888;">No products yet</p>';
+                return;
+            }
+
+            container.innerHTML = topProducts.map(product => `
+                <div class="top-product-item">
+                    <img src="${product.image || 'https://via.placeholder.com/50'}" alt="${product.name}">
+                    <div class="product-info">
+                        <h4>${product.name}</h4>
+                        <p>${product.category}</p>
+                    </div>
+                    <span class="product-price">Rs.${product.price?.toLocaleString()}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

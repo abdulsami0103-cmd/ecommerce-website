@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Redstone Store</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <style>
+        .products-page {
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+
+        .products-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .products-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .products-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .products-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .view-toggles {
+            display: flex;
+            gap: 5px;
+        }
+
+        .view-toggle {
+            width: 40px;
+            height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-toggle:hover,
+        .view-toggle.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        @media (max-width: 1024px) {
+            .products-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                display: none;
+            }
+
+            .filters-sidebar.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+                background: var(--dark);
+                padding: 80px 20px 20px;
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body data-page="products">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <span>REDSTONE</span> STORE
+            </a>
+
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="products.html" class="nav-link active">Products</a>
+                <a href="products.html?category=electronics" class="nav-link">Electronics</a>
+                <a href="products.html?category=fashion" class="nav-link">Fashion</a>
+                <a href="products.html?category=digital" class="nav-link">Digital</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search products...">
+                </div>
+
+                <a href="wishlist.html" class="icon-btn">
+                    <i class="far fa-heart"></i>
+                    <span class="badge wishlist-count" style="display: none;">0</span>
+                </a>
+
+                <a href="cart.html" class="icon-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge cart-count" style="display: none;">0</span>
+                </a>
+
+                <a href="login.html" class="icon-btn">
+                    <i class="far fa-user"></i>
+                </a>
+
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="products-page">
+        <div class="container">
+            <div class="products-header">
+                <div>
+                    <h1 id="page-title">All Products</h1>
+                    <p class="text-muted" id="products-count">Loading...</p>
+                </div>
+                <div class="products-controls">
+                    <select class="form-select" id="sort-select" style="width: 200px;">
+                        <option value="default">Sort by: Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Top Rated</option>
+                        <option value="newest">Newest First</option>
+                    </select>
+                    <div class="view-toggles">
+                        <button class="view-toggle active"><i class="fas fa-th"></i></button>
+                        <button class="view-toggle"><i class="fas fa-list"></i></button>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="filter-toggle" style="display: none;">
+                        <i class="fas fa-filter"></i> Filters
+                    </button>
+                </div>
+            </div>
+
+            <div class="products-layout">
+                <!-- Filters Sidebar -->
+                <aside class="filters-sidebar">
+                    <div class="filter-group">
+                        <h4 class="filter-title">Categories</h4>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="checkbox" name="category" value="electronics">
+                                <label>Electronics</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="category" value="fashion">
+                                <label>Fashion</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="category" value="digital">
+                                <label>Digital Products</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="category" value="home">
+                                <label>Home & Living</label>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-title">Price Range</h4>
+                        <div class="price-range">
+                            <input type="number" class="price-input" id="min-price" placeholder="Min">
+                            <span>-</span>
+                            <input type="number" class="price-input" id="max-price" placeholder="Max">
+                        </div>
+                        <button class="btn btn-secondary btn-sm btn-block mt-2" id="apply-price-filter">Apply</button>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-title">Product Type</h4>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="checkbox" name="type" value="physical">
+                                <label>Physical Products</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" name="type" value="digital">
+                                <label>Digital Products</label>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-title">Rating</h4>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="rating" value="4">
+                                <label><i class="fas fa-star" style="color: var(--warning);"></i> 4 & Above</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="rating" value="3">
+                                <label><i class="fas fa-star" style="color: var(--warning);"></i> 3 & Above</label>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="rating" value="0">
+                                <label>All Ratings</label>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline btn-block" onclick="location.href='products.html'">
+                        <i class="fas fa-redo"></i> Reset Filters
+                    </button>
+                </aside>
+
+                <!-- Products Grid -->
+                <div>
+                    <div id="products-grid" class="products-grid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border: none; padding: 0;">
+                <p>&copy; 2024 Redstone Store. All rights reserved.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa" style="font-size: 2rem; color: var(--text-muted);"></i>
+                    <i class="fab fa-cc-mastercard" style="font-size: 2rem; color: var(--text-muted);"></i>
+                    <i class="fab fa-cc-paypal" style="font-size: 2rem; color: var(--text-muted);"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>

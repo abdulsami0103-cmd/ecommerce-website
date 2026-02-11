@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - Redstone Admin</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1><span>REDSTONE</span> ADMIN</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="products.html" class="nav-item">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a href="customers.html" class="nav-item active">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>View Store</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search customers..." id="search-input" oninput="searchCustomers()">
+            </div>
+
+            <div class="top-bar-actions">
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=7800ff&color=fff" alt="Admin">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Customers Content -->
+        <div class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Customers</h1>
+                    <p>Manage your customer base</p>
+                </div>
+                <div class="header-stats">
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="total-customers">0</span>
+                        <span class="mini-stat-label">Total</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="active-customers">0</span>
+                        <span class="mini-stat-label">Active</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="new-customers">0</span>
+                        <span class="mini-stat-label">New (30d)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="filters-row">
+                    <select id="status-filter" class="form-select" onchange="filterCustomers()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+
+                    <select id="orders-filter" class="form-select" onchange="filterCustomers()">
+                        <option value="">All Customers</option>
+                        <option value="with-orders">With Orders</option>
+                        <option value="no-orders">No Orders</option>
+                    </select>
+
+                    <select id="sort-filter" class="form-select" onchange="filterCustomers()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name: A-Z</option>
+                        <option value="orders">Most Orders</option>
+                        <option value="spent">Highest Spent</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Customers Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Orders</th>
+                                <th>Total Spent</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table">
+                            <!-- Loaded by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Loaded by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Customer Details Modal -->
+    <div class="modal" id="customer-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Customer Details</h2>
+                <button class="modal-close" onclick="closeCustomerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="customer-details">
+                <!-- Loaded by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCustomerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Admin JS -->
+    <script src="../js/admin.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        let currentCustomers = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomers();
+        });
+
+        function loadCustomers() {
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+            // If no users, create sample data
+            if (users.length === 0) {
+                users = getSampleCustomers();
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            // Enrich customer data with order info
+            currentCustomers = users.map(user => {
+                const userOrders = orders.filter(o =>
+                    o.customer?.email === user.email ||
+                    o.customer?.name === user.name
+                );
+                const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+                const lastOrder = userOrders.length > 0
+                    ? userOrders.sort((a, b) => new Date(b.date) - new Date(a.date))[0].date
+                    : null;
+
+                return {
+                    ...user,
+                    ordersCount: userOrders.length,
+                    totalSpent: totalSpent,
+                    lastOrder: lastOrder,
+                    status: lastOrder && new Date(lastOrder) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+                        ? 'active'
+                        : 'inactive'
+                };
+            });
+
+            updateCustomerStats();
+            filterCustomers();
+        }
+
+        function getSampleCustomers() {
+            return [
+                {
+                    id: 1,
+                    name: 'Ahmed Khan',
+                    email: 'ahmed@example.com',
+                    phone: '+92 300 1234567',
+                    address: '123 Main Street',
+                    city: 'Lahore',
+                    country: 'Pakistan',
+                    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+                },
+                {
+                    id: 2,
+                    name: 'Sara Ali',
+                    email: 'sara@example.com',
+                    phone: '+92 321 9876543',
+                    address: '456 Park Avenue',
+                    city: 'Karachi',
+                    country: 'Pakistan',
+                    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+                },
+                {
+                    id: 3,
+                    name: 'Usman Malik',
+                    email: 'usman@example.com',
+                    phone: '+92 333 5551234',
+                    address: '789 Tech Road',
+                    city: 'Islamabad',
+                    country: 'Pakistan',
+                    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+                },
+                {
+                    id: 4,
+                    name: 'Fatima Noor',
+                    email: 'fatima@example.com',
+                    phone: '+92 345 6789012',
+                    address: '321 Garden Street',
+                    city: 'Rawalpindi',
+                    country: 'Pakistan',
+                    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+                },
+                {
+                    id: 5,
+                    name: 'Hassan Raza',
+                    email: 'hassan@example.com',
+                    phone: '+92 312 3456789',
+                    address: '555 Business Plaza',
+                    city: 'Faisalabad',
+                    country: 'Pakistan',
+                    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString()
+                }
+            ];
+        }
+
+        function updateCustomerStats() {
+            const total = currentCustomers.length;
+            const active = currentCustomers.filter(c => c.status === 'active').length;
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            const newCustomers = currentCustomers.filter(c => new Date(c.createdAt) > thirtyDaysAgo).length;
+
+            document.getElementById('total-customers').textContent = total;
+            document.getElementById('active-customers').textContent = active;
+            document.getElementById('new-customers').textContent = newCustomers;
+        }
+
+        function filterCustomers() {
+            let filtered = [...currentCustomers];
+
+            // Search filter
+            const search = document.getElementById('search-input').value.toLowerCase();
+            if (search) {
+                filtered = filtered.filter(c =>
+                    c.name?.toLowerCase().includes(search) ||
+                    c.email?.toLowerCase().includes(search) ||
+                    c.phone?.includes(search)
+                );
+            }
+
+            // Status filter
+            const status = document.getElementById('status-filter').value;
+            if (status) {
+                filtered = filtered.filter(c => c.status === status);
+            }
+
+            // Orders filter
+            const ordersFilter = document.getElementById('orders-filter').value;
+            if (ordersFilter === 'with-orders') {
+                filtered = filtered.filter(c => c.ordersCount > 0);
+            } else if (ordersFilter === 'no-orders') {
+                filtered = filtered.filter(c => c.ordersCount === 0);
+            }
+
+            // Sort
+            const sort = document.getElementById('sort-filter').value;
+            if (sort === 'newest') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sort === 'oldest') {
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'orders') {
+                filtered.sort((a, b) => b.ordersCount - a.ordersCount);
+            } else if (sort === 'spent') {
+                filtered.sort((a, b) => b.totalSpent - a.totalSpent);
+            }
+
+            renderCustomers(filtered);
+        }
+
+        function searchCustomers() {
+            filterCustomers();
+        }
+
+        function renderCustomers(customers) {
+            const tbody = document.getElementById('customers-table');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageCustomers = customers.slice(start, end);
+
+            if (pageCustomers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #888;">No customers found</td></tr>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = pageCustomers.map(customer => `
+                <tr>
+                    <td>
+                        <div class="customer-cell">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(customer.name)}&background=7800ff&color=fff" alt="${customer.name}" class="customer-avatar">
+                            <div>
+                                <strong>${customer.name}</strong>
+                                <small>${customer.city || 'N/A'}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone || 'N/A'}</td>
+                    <td><strong>${customer.ordersCount}</strong></td>
+                    <td><strong>Rs.${customer.totalSpent.toLocaleString()}</strong></td>
+                    <td><span class="status-badge status-${customer.status}">${customer.status}</span></td>
+                    <td>${new Date(customer.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="viewCustomer(${customer.id})" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" onclick="emailCustomer('${customer.email}')" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination(customers.length);
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span class="page-dots">...</span>';
+                }
+            }
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentCustomers.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            filterCustomers();
+        }
+
+        function viewCustomer(id) {
+            const customer = currentCustomers.find(c => c.id === id);
+            if (!customer) return;
+
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const customerOrders = orders.filter(o =>
+                o.customer?.email === customer.email ||
+                o.customer?.name === customer.name
+            ).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const details = document.getElementById('customer-details');
+            details.innerHTML = `
+                <div class="customer-profile">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(customer.name)}&background=7800ff&color=fff&size=100" alt="${customer.name}" class="profile-avatar">
+                    <div class="profile-info">
+                        <h3>${customer.name}</h3>
+                        <p>${customer.email}</p>
+                        <span class="status-badge status-${customer.status}">${customer.status}</span>
+                    </div>
+                </div>
+
+                <div class="order-detail-grid">
+                    <div class="order-detail-section">
+                        <h3><i class="fas fa-user"></i> Contact Information</h3>
+                        <div class="detail-row">
+                            <span>Email:</span>
+                            <strong>${customer.email}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Phone:</span>
+                            <strong>${customer.phone || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Address:</span>
+                            <strong>${customer.address || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>City:</span>
+                            <strong>${customer.city || 'N/A'}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Country:</span>
+                            <strong>${customer.country || 'N/A'}</strong>
+                        </div>
+                    </div>
+
+                    <div class="order-detail-section">
+                        <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                        <div class="detail-row">
+                            <span>Total Orders:</span>
+                            <strong>${customer.ordersCount}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Total Spent:</span>
+                            <strong>Rs.${customer.totalSpent.toLocaleString()}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Avg Order Value:</span>
+                            <strong>Rs.${customer.ordersCount > 0 ? Math.round(customer.totalSpent / customer.ordersCount).toLocaleString() : 0}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Member Since:</span>
+                            <strong>${new Date(customer.createdAt).toLocaleDateString()}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>Last Order:</span>
+                            <strong>${customer.lastOrder ? new Date(customer.lastOrder).toLocaleDateString() : 'Never'}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3><i class="fas fa-shopping-bag"></i> Recent Orders</h3>
+                    ${customerOrders.length > 0 ? `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${customerOrders.slice(0, 5).map(order => `
+                                    <tr>
+                                        <td>#${order.id}</td>
+                                        <td>${new Date(order.date).toLocaleDateString()}</td>
+                                        <td>${order.items?.length || 0} items</td>
+                                        <td>Rs.${(order.total || 0).toLocaleString()}</td>
+                                        <td><span class="status-badge status-${order.status}">${order.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p style="color: #888; text-align: center; padding: 20px;">No orders yet</p>'}
+                </div>
+            `;
+
+            document.getElementById('customer-modal').classList.add('active');
+        }
+
+        function closeCustomerModal() {
+            document.getElementById('customer-modal').classList.remove('active');
+        }
+
+        function emailCustomer(email) {
+            window.location.href = 'mailto:' + email;
+        }
+    </script>
+</body>
+</html>

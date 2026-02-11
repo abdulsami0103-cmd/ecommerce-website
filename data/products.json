@@ -1,0 +1,358 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "Wireless Bluetooth Headphones Pro",
+            "slug": "wireless-bluetooth-headphones-pro",
+            "category": "electronics",
+            "subcategory": "audio",
+            "type": "physical",
+            "price": 12999,
+            "originalPrice": 18999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+                "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=500"
+            ],
+            "description": "Premium wireless headphones with active noise cancellation, 30-hour battery life, and crystal-clear sound quality.",
+            "features": ["Active Noise Cancellation", "30-hour Battery", "Bluetooth 5.0", "Foldable Design"],
+            "variants": {
+                "colors": ["Black", "White", "Navy Blue"]
+            },
+            "stock": 50,
+            "rating": 4.8,
+            "reviews": 245,
+            "isNew": true,
+            "isFeatured": true,
+            "tags": ["wireless", "headphones", "audio", "bluetooth"]
+        },
+        {
+            "id": 2,
+            "name": "Smart Fitness Watch Series X",
+            "slug": "smart-fitness-watch-series-x",
+            "category": "electronics",
+            "subcategory": "wearables",
+            "type": "physical",
+            "price": 8499,
+            "originalPrice": 12999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"
+            ],
+            "description": "Advanced smartwatch with health monitoring, GPS tracking, and 7-day battery life.",
+            "features": ["Heart Rate Monitor", "GPS Tracking", "Water Resistant", "Sleep Tracking"],
+            "variants": {
+                "colors": ["Black", "Silver", "Rose Gold"],
+                "sizes": ["40mm", "44mm"]
+            },
+            "stock": 120,
+            "rating": 4.6,
+            "reviews": 189,
+            "isNew": false,
+            "isFeatured": true,
+            "tags": ["smartwatch", "fitness", "health", "wearable"]
+        },
+        {
+            "id": 3,
+            "name": "Premium Leather Laptop Bag",
+            "slug": "premium-leather-laptop-bag",
+            "category": "fashion",
+            "subcategory": "bags",
+            "type": "physical",
+            "price": 5999,
+            "originalPrice": 7999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"
+            ],
+            "description": "Handcrafted genuine leather laptop bag with multiple compartments. Fits up to 15.6\" laptops.",
+            "features": ["Genuine Leather", "Multiple Compartments", "Padded Laptop Sleeve", "Adjustable Strap"],
+            "variants": {
+                "colors": ["Brown", "Black", "Tan"]
+            },
+            "stock": 35,
+            "rating": 4.9,
+            "reviews": 78,
+            "isNew": false,
+            "isFeatured": true,
+            "tags": ["bag", "leather", "laptop", "professional"]
+        },
+        {
+            "id": 4,
+            "name": "JavaScript Mastery Course",
+            "slug": "javascript-mastery-course",
+            "category": "courses",
+            "subcategory": "programming",
+            "type": "digital",
+            "price": 2999,
+            "originalPrice": 9999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=500"
+            ],
+            "description": "Complete JavaScript course from basics to advanced. Includes React, Node.js, and real-world projects.",
+            "features": ["50+ Hours Content", "Lifetime Access", "Certificate", "Project Files"],
+            "variants": {},
+            "stock": 999,
+            "rating": 4.9,
+            "reviews": 1250,
+            "isNew": true,
+            "isFeatured": true,
+            "tags": ["course", "javascript", "programming", "web development"]
+        },
+        {
+            "id": 5,
+            "name": "Portable Bluetooth Speaker",
+            "slug": "portable-bluetooth-speaker",
+            "category": "electronics",
+            "subcategory": "audio",
+            "type": "physical",
+            "price": 3499,
+            "originalPrice": 4999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500"
+            ],
+            "description": "Waterproof portable speaker with 360° sound and 12-hour playtime.",
+            "features": ["Waterproof IPX7", "360° Sound", "12-hour Battery", "Built-in Mic"],
+            "variants": {
+                "colors": ["Black", "Blue", "Red", "Green"]
+            },
+            "stock": 80,
+            "rating": 4.5,
+            "reviews": 156,
+            "isNew": false,
+            "isFeatured": false,
+            "tags": ["speaker", "bluetooth", "portable", "waterproof"]
+        },
+        {
+            "id": 6,
+            "name": "Men's Classic Sneakers",
+            "slug": "mens-classic-sneakers",
+            "category": "fashion",
+            "subcategory": "footwear",
+            "type": "physical",
+            "price": 4599,
+            "originalPrice": 5999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"
+            ],
+            "description": "Comfortable everyday sneakers with memory foam insole and durable rubber outsole.",
+            "features": ["Memory Foam", "Breathable Mesh", "Rubber Outsole", "Lightweight"],
+            "variants": {
+                "colors": ["White", "Black", "Grey"],
+                "sizes": ["39", "40", "41", "42", "43", "44"]
+            },
+            "stock": 200,
+            "rating": 4.4,
+            "reviews": 312,
+            "isNew": false,
+            "isFeatured": false,
+            "tags": ["shoes", "sneakers", "casual", "men"]
+        },
+        {
+            "id": 7,
+            "name": "UI/UX Design Templates Bundle",
+            "slug": "ui-ux-design-templates-bundle",
+            "category": "digital",
+            "subcategory": "design",
+            "type": "digital",
+            "price": 1499,
+            "originalPrice": 4999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500"
+            ],
+            "description": "500+ premium UI/UX design templates for Figma. Includes mobile apps, web dashboards, and landing pages.",
+            "features": ["500+ Templates", "Figma Files", "Regular Updates", "Commercial License"],
+            "variants": {},
+            "stock": 999,
+            "rating": 4.7,
+            "reviews": 89,
+            "isNew": true,
+            "isFeatured": false,
+            "tags": ["design", "ui", "ux", "figma", "templates"]
+        },
+        {
+            "id": 8,
+            "name": "Mechanical Gaming Keyboard",
+            "slug": "mechanical-gaming-keyboard",
+            "category": "electronics",
+            "subcategory": "gaming",
+            "type": "physical",
+            "price": 7999,
+            "originalPrice": 9999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=500"
+            ],
+            "description": "RGB mechanical keyboard with Cherry MX switches and programmable macros.",
+            "features": ["Cherry MX Switches", "RGB Backlight", "Macro Keys", "USB Passthrough"],
+            "variants": {
+                "colors": ["Black", "White"]
+            },
+            "stock": 45,
+            "rating": 4.8,
+            "reviews": 234,
+            "isNew": false,
+            "isFeatured": true,
+            "tags": ["keyboard", "gaming", "mechanical", "rgb"]
+        },
+        {
+            "id": 9,
+            "name": "Women's Designer Handbag",
+            "slug": "womens-designer-handbag",
+            "category": "fashion",
+            "subcategory": "bags",
+            "type": "physical",
+            "price": 8999,
+            "originalPrice": 12999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500"
+            ],
+            "description": "Elegant designer handbag with premium vegan leather and gold-tone hardware.",
+            "features": ["Vegan Leather", "Gold Hardware", "Multiple Pockets", "Detachable Strap"],
+            "variants": {
+                "colors": ["Black", "Beige", "Burgundy"]
+            },
+            "stock": 25,
+            "rating": 4.6,
+            "reviews": 67,
+            "isNew": true,
+            "isFeatured": false,
+            "tags": ["handbag", "women", "fashion", "designer"]
+        },
+        {
+            "id": 10,
+            "name": "Stock Photography Bundle",
+            "slug": "stock-photography-bundle",
+            "category": "digital",
+            "subcategory": "photography",
+            "type": "digital",
+            "price": 999,
+            "originalPrice": 2999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500"
+            ],
+            "description": "1000+ high-resolution stock photos for commercial use. Perfect for websites, social media, and marketing.",
+            "features": ["1000+ Photos", "High Resolution", "Commercial License", "Regular Updates"],
+            "variants": {},
+            "stock": 999,
+            "rating": 4.5,
+            "reviews": 145,
+            "isNew": false,
+            "isFeatured": false,
+            "tags": ["photos", "stock", "photography", "images"]
+        },
+        {
+            "id": 11,
+            "name": "Wireless Charging Pad",
+            "slug": "wireless-charging-pad",
+            "category": "electronics",
+            "subcategory": "accessories",
+            "type": "physical",
+            "price": 1999,
+            "originalPrice": 2999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1586816879360-004f5b0c51e5?w=500"
+            ],
+            "description": "Fast wireless charging pad compatible with all Qi-enabled devices. Includes LED indicator.",
+            "features": ["15W Fast Charging", "Qi Compatible", "LED Indicator", "Anti-Slip Base"],
+            "variants": {
+                "colors": ["Black", "White"]
+            },
+            "stock": 150,
+            "rating": 4.3,
+            "reviews": 98,
+            "isNew": false,
+            "isFeatured": false,
+            "tags": ["charger", "wireless", "charging", "accessories"]
+        },
+        {
+            "id": 12,
+            "name": "Premium Cotton T-Shirt Pack",
+            "slug": "premium-cotton-tshirt-pack",
+            "category": "fashion",
+            "subcategory": "clothing",
+            "type": "physical",
+            "price": 2499,
+            "originalPrice": 3999,
+            "currency": "PKR",
+            "images": [
+                "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500"
+            ],
+            "description": "Pack of 3 premium cotton t-shirts. Soft, breathable, and perfect for everyday wear.",
+            "features": ["100% Cotton", "Pack of 3", "Pre-shrunk", "Comfortable Fit"],
+            "variants": {
+                "colors": ["Black/White/Grey", "Navy/White/Black"],
+                "sizes": ["S", "M", "L", "XL", "XXL"]
+            },
+            "stock": 300,
+            "rating": 4.7,
+            "reviews": 456,
+            "isNew": false,
+            "isFeatured": false,
+            "tags": ["tshirt", "cotton", "clothing", "pack"]
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Electronics",
+            "slug": "electronics",
+            "icon": "fas fa-laptop",
+            "count": 156,
+            "subcategories": ["audio", "wearables", "gaming", "accessories"]
+        },
+        {
+            "id": 2,
+            "name": "Fashion",
+            "slug": "fashion",
+            "icon": "fas fa-tshirt",
+            "count": 243,
+            "subcategories": ["clothing", "footwear", "bags", "accessories"]
+        },
+        {
+            "id": 3,
+            "name": "Digital Products",
+            "slug": "digital",
+            "icon": "fas fa-download",
+            "count": 89,
+            "subcategories": ["courses", "design", "photography", "software"]
+        },
+        {
+            "id": 4,
+            "name": "Home & Living",
+            "slug": "home",
+            "icon": "fas fa-home",
+            "count": 178,
+            "subcategories": ["furniture", "decor", "kitchen", "bedding"]
+        },
+        {
+            "id": 5,
+            "name": "Sports & Fitness",
+            "slug": "sports",
+            "icon": "fas fa-dumbbell",
+            "count": 134,
+            "subcategories": ["equipment", "clothing", "accessories", "nutrition"]
+        },
+        {
+            "id": 6,
+            "name": "Books & Media",
+            "slug": "books",
+            "icon": "fas fa-book",
+            "count": 212,
+            "subcategories": ["ebooks", "audiobooks", "magazines", "comics"]
+        }
+    ],
+    "currencies": {
+        "PKR": { "symbol": "Rs.", "rate": 1 },
+        "USD": { "symbol": "$", "rate": 0.0036 },
+        "EUR": { "symbol": "€", "rate": 0.0033 },
+        "GBP": { "symbol": "£", "rate": 0.0028 }
+    }
+}

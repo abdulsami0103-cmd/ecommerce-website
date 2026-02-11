@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open:*)",
+      "Bash(npm install:*)",
+      "Bash(./node_modules/.bin/next:*)",
+      "Bash(npm run dev:*)",
+      "Bash(brew services start:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(pkill:*)",
+      "Bash(grep:*)",
+      "Bash(for i in 1 2 3 4 5 6 7 8 9 10)",
+      "Bash(do echo \"Waiting $i...\")",
+      "Bash(/bin/sleep 1)",
+      "Bash(done)",
+      "Bash(/bin/sleep:*)",
+      "Bash(mongosh:*)",
+      "Bash(node:*)",
+      "Bash(xargs:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(while ps aux)",
+      "Bash(do sleep 5)",
+      "Bash(do sleep 3)",
+      "Bash(pgrep:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODFjZWJkZjE1ODczNDczNWQxYmZhNCIsImlhdCI6MTc3MDQ1MTQzMiwiZXhwIjoxNzcwNDU1MDMyfQ.IrHKr2RZyqbBrBYPiALVhJRR7zp492piigYTxbm5cmM\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODFjZWIxZjE1ODczNDczNWQxYmY3ZCIsImlhdCI6MTc3MDQ1Mjc5OCwiZXhwIjoxNzcwNDU2Mzk4fQ.5LHgnylJ6-A0Mlg7wIeFeJN7fARjnidY0yvOPsdvb24\" curl -s \"http://localhost:5001/api/vendor/suborders/6986f617c5fd8b25eb4de96f/shipments\" -H \"Authorization: Bearer $TOKEN\")",
+      "WebFetch(domain:dribbble.com)",
+      "WebSearch",
+      "Bash(wc:*)"
+    ]
+  }
+}
