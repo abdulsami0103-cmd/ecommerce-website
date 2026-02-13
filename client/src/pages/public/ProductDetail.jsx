@@ -381,9 +381,7 @@ const ProductDetail = () => {
 
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-4">{t('product.description')}</h2>
-        <div className="prose max-w-none">
-          <p className="whitespace-pre-line">{product.description}</p>
-        </div>
+        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
       </div>
 
       {product.type === 'physical' && product.shipping && (
