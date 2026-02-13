@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
+const Category = require('../models/Category');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -16,9 +17,15 @@ const getProducts = async (req, res, next) => {
       'moderation.status': { $in: ['approved', 'published'] }
     };
 
-    // Filter by category
+    // Filter by category (supports both ID and slug)
     if (req.query.category) {
-      query.category = req.query.category;
+      const mongoose = require('mongoose');
+      if (mongoose.Types.ObjectId.isValid(req.query.category)) {
+        query.category = req.query.category;
+      } else {
+        const cat = await Category.findOne({ slug: req.query.category });
+        if (cat) query.category = cat._id;
+      }
     }
 
     // Filter by type

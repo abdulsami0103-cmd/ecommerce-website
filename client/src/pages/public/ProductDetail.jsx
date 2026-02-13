@@ -372,7 +372,7 @@ const ProductDetail = () => {
 
           <div className="text-sm text-gray-500">
             {product.category && (
-              <p>Category: <Link to={`/products?category=${product.category._id}`} className="text-primary-600 hover:underline">{product.category.name}</Link></p>
+              <p>Category: <Link to={`/products?category=${product.category.slug}`} className="text-primary-600 hover:underline">{product.category.name}</Link></p>
             )}
             {product.tags?.length > 0 && <p className="mt-1">Tags: {product.tags.join(', ')}</p>}
           </div>

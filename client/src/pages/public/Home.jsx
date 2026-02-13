@@ -346,7 +346,7 @@ const Home = () => {
               categories.slice(0, 6).map((category, index) => (
                 <Link
                   key={category._id}
-                  to={`/products?category=${category._id}`}
+                  to={`/products?category=${category.slug}`}
                   className="flex flex-col items-center group"
                 >
                   <div className={`w-16 h-16 rounded-full ${categoryIcons[index % categoryIcons.length].color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}>

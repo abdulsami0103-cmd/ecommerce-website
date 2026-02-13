@@ -209,7 +209,7 @@ const Products = () => {
                     <label
                       key={category._id}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-all ${
-                        filters.category === category._id
+                        filters.category === category.slug
                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : 'hover:bg-gray-50 text-gray-600'
                       }`}
@@ -218,13 +218,13 @@ const Products = () => {
                         <input
                           type="radio"
                           name="category"
-                          checked={filters.category === category._id}
-                          onChange={() => handleFilterChange('category', category._id)}
+                          checked={filters.category === category.slug}
+                          onChange={() => handleFilterChange('category', category.slug)}
                           className="w-4 h-4 text-emerald-500 border-gray-300 focus:ring-emerald-500"
                         />
                         <span className="text-sm font-medium">{category.name}</span>
                       </div>
-                      {filters.category === category._id && <ChevronRightIcon className="w-4 h-4" />}
+                      {filters.category === category.slug && <ChevronRightIcon className="w-4 h-4" />}
                     </label>
                   ))}
                 </div>
