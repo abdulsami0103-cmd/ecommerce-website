@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="card group overflow-hidden hover:shadow-md transition-shadow"
+      className="card group overflow-hidden hover:shadow-md transition-shadow flex flex-col"
     >
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
@@ -75,7 +75,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-grow">
         {/* Vendor */}
         {product.vendor?.storeName && (
           <p className="text-xs text-gray-500 mb-1">{product.vendor.storeName}</p>
@@ -103,6 +103,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Add to Cart */}
+        <div className="mt-auto" />
         <Button
           variant="outline"
           size="sm"

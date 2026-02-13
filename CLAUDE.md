@@ -63,6 +63,34 @@ Should I proceed? (Yes/No)
 - Keep changes minimal and focused
 - Test changes work before moving on
 
+## Deployment Rules (MANDATORY)
+
+### Server Details:
+- **Domain**: marketplace.byredstone.com
+- **Server IP**: 65.109.60.53
+- **SSH**: `ssh -p 2242 redstone@65.109.60.53`
+- **Project Path**: `/var/ww/project`
+- **PM2 Process**: `ecommerce-backend`
+
+### Deployment Workflow (After EVERY code change):
+1. **Push to GitHub** from local MacBook
+2. **Pull from GitHub** on server
+3. **If frontend (client/) changed**: Rebuild client (`npm run build`) on server
+4. **Restart PM2** backend: `pm2 restart ecommerce-backend`
+5. **Verify** server is running: `pm2 status`
+
+### Deployment Commands (run on server via SSH):
+```bash
+ssh -p 2242 redstone@65.109.60.53 "cd /var/ww/project && git pull origin main && npm run build && pm2 restart ecommerce-backend && pm2 status"
+```
+
+### Important:
+- ALWAYS push to GitHub first, then pull on server
+- NEVER edit files directly on the server
+- ALWAYS restart PM2 after pulling changes
+- If only backend changes: skip `npm run build`, just restart PM2
+- If frontend changes: MUST run `npm run build` before PM2 restart
+
 ## Language Preference
 - User communicates in Roman Urdu (Urdu written in English)
 - Respond in same style when appropriate
