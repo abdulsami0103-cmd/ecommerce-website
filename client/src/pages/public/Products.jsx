@@ -71,6 +71,14 @@ const Products = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  // Sync URL category param to Redux filters on initial load
+  useEffect(() => {
+    const categoryQuery = searchParams.get('category');
+    if (categoryQuery && categoryQuery !== filters.category) {
+      dispatch(setFilters({ category: categoryQuery }));
+    }
+  }, []);
+
   useEffect(() => {
     const params = {
       page: pagination.page,
@@ -79,13 +87,8 @@ const Products = () => {
     };
 
     const searchQuery = searchParams.get('search');
-    const categoryQuery = searchParams.get('category');
-
     if (searchQuery) {
       params.search = searchQuery;
-    }
-    if (categoryQuery) {
-      params.category = categoryQuery;
     }
 
     dispatch(fetchProducts(params));
@@ -94,6 +97,15 @@ const Products = () => {
   const handleFilterChange = (key, value) => {
     dispatch(setFilters({ [key]: value }));
     dispatch(setPage(1));
+    if (key === 'category') {
+      const newParams = new URLSearchParams(searchParams);
+      if (value) {
+        newParams.set('category', value);
+      } else {
+        newParams.delete('category');
+      }
+      setSearchParams(newParams);
+    }
   };
 
   const handleClearFilters = () => {
