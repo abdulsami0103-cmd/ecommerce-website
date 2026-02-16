@@ -38,7 +38,7 @@ const getProductReviews = async (req, res, next) => {
 
     // Get rating breakdown
     const ratingBreakdown = await Review.aggregate([
-      { $match: { product: require('mongoose').Types.ObjectId(req.params.productId) } },
+      { $match: { product: new (require('mongoose').Types.ObjectId)(req.params.productId) } },
       { $group: { _id: '$rating', count: { $sum: 1 } } },
       { $sort: { _id: -1 } },
     ]);
