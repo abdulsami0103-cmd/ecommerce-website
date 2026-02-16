@@ -6,6 +6,10 @@ const Payout = require('../models/Payout');
 // @desc    Create payment intent
 // @route   POST /api/payments/create-intent
 // @access  Private
+const STRIPE_MINIMUM_AMOUNTS = {
+  usd: 0.50, eur: 0.50, gbp: 0.30, pkr: 150, inr: 50, aed: 2,
+};
+
 const createPaymentIntent = async (req, res, next) => {
   try {
     const { orderId } = req.body;
@@ -26,9 +30,19 @@ const createPaymentIntent = async (req, res, next) => {
       });
     }
 
+    // Check minimum amount for Stripe
+    const currency = order.totals.currency.toLowerCase();
+    const minAmount = STRIPE_MINIMUM_AMOUNTS[currency] || 0.50;
+    if (order.totals.total < minAmount) {
+      return res.status(400).json({
+        success: false,
+        message: `Minimum order amount for card payment is ${order.totals.currency} ${minAmount}. Please use Cash on Delivery for smaller orders.`,
+      });
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(order.totals.total * 100), // Convert to cents
-      currency: order.totals.currency.toLowerCase(),
+      currency,
       metadata: {
         orderId: order._id.toString(),
         orderNumber: order.orderNumber,
