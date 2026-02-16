@@ -1,6 +1,7 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const Vendor = require('../models/Vendor');
 
 // @desc    Get user's conversations
 // @route   GET /api/conversations
@@ -10,9 +11,41 @@ const getConversations = async (req, res, next) => {
     const conversations = await Conversation.find({
       participants: req.user.id,
     })
-      .populate('participants', 'profile.firstName profile.lastName profile.avatar email')
+      .populate('participants', 'profile.firstName profile.lastName profile.avatar email role')
       .populate('lastMessage.sender', 'profile.firstName profile.lastName')
       .sort({ updatedAt: -1 });
+
+    // Attach vendor store names for vendor participants
+    const participantIds = [];
+    conversations.forEach(c => {
+      c.participants.forEach(p => {
+        if (p._id && p.role === 'vendor') participantIds.push(p._id);
+      });
+    });
+
+    if (participantIds.length > 0) {
+      const vendors = await Vendor.find({ user: { $in: participantIds } }).select('user storeName logo');
+      const vendorMap = {};
+      vendors.forEach(v => { vendorMap[v.user.toString()] = v; });
+
+      const convObjects = conversations.map(c => {
+        const obj = c.toObject();
+        obj.participants = obj.participants.map(p => {
+          const vendor = vendorMap[p._id.toString()];
+          if (vendor) {
+            p.vendorStoreName = vendor.storeName;
+            p.vendorLogo = vendor.logo;
+          }
+          return p;
+        });
+        return obj;
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: convObjects,
+      });
+    }
 
     res.status(200).json({
       success: true,
