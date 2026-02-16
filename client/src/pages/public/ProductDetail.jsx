@@ -376,12 +376,36 @@ const ProductDetail = () => {
             )}
             {product.tags?.length > 0 && <p className="mt-1">Tags: {product.tags.join(', ')}</p>}
           </div>
+
+          {/* Specs table extracted from description */}
+          {product.description && (() => {
+            const tableMatch = product.description.match(/<table[\s\S]*?<\/table>/i);
+            if (tableMatch) {
+              return (
+                <div className="mt-6 border rounded-lg overflow-hidden">
+                  <h3 className="font-semibold text-sm bg-gray-50 px-4 py-2 border-b">Specifications</h3>
+                  <div
+                    className="prose prose-sm max-w-none specs-table"
+                    dangerouslySetInnerHTML={{ __html: tableMatch[0] }}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
 
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-4">{t('product.description')}</h2>
-        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: product.description
+              ? product.description.replace(/<table[\s\S]*?<\/table>/i, '')
+              : ''
+          }}
+        />
       </div>
 
       {product.type === 'physical' && product.shipping && (

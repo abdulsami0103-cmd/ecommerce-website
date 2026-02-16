@@ -65,7 +65,7 @@ const Login = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         toast.success('Login successful!');
-        const redirectUrl = data.user.role === 'admin' ? '/admin/dashboard' :
+        const redirectUrl = data.user.role === 'admin' ? '/admin' :
                           data.user.role === 'vendor' ? '/vendor/dashboard' : '/';
         window.location.href = redirectUrl;
       } else {
