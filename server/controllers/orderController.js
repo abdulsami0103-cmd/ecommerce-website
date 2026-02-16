@@ -541,6 +541,8 @@ const updatePaymentStatus = async (req, res, next) => {
     // If payment is successful, update order status
     if (status === 'paid') {
       order.status = 'processing';
+    } else if (status === 'cancelled') {
+      order.status = 'cancelled';
     }
 
     await order.save();
