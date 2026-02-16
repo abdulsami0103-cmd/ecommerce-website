@@ -96,6 +96,7 @@ import VendorRMARequests from './pages/vendor/RMARequests';
 import VendorInvoices from './pages/vendor/VendorInvoices';
 import VendorTaxReports from './pages/vendor/TaxReports';
 import VendorReviews from './pages/vendor/Reviews';
+import VendorQuestions from './pages/vendor/Questions';
 import VendorStorefrontEditor from './pages/vendor/StorefrontEditor';
 import VendorReports from './pages/vendor/Reports';
 import VendorCoupons from './pages/vendor/Coupons';
@@ -879,6 +880,16 @@ function App() {
           <ProtectedRoute roles={['vendor']}>
             <VendorLayout>
               <VendorReviews />
+            </VendorLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vendor/questions"
+        element={
+          <ProtectedRoute roles={['vendor']}>
+            <VendorLayout>
+              <VendorQuestions />
             </VendorLayout>
           </ProtectedRoute>
         }

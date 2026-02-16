@@ -39,6 +39,7 @@ const productImageRoutes = require('./productImages');
 const productVariantRoutes = require('./productVariants');
 const digitalAssetRoutes = require('./digitalAssets');
 const bulkOperationRoutes = require('./bulkOperations');
+const productQuestionRoutes = require('./productQuestion');
 
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
@@ -80,5 +81,6 @@ router.use('/seo', seoRoutes);
 router.use('/localization', localizationRoutes);
 router.use('/', taxReportRoutes);
 router.use('/', vendorReviewRoutes);
+router.use('/', productQuestionRoutes);
 
 module.exports = router;

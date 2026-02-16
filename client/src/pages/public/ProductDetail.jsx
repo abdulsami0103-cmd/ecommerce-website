@@ -82,6 +82,14 @@ const ProductDetail = () => {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
 
+  // Q&A state
+  const [questions, setQuestions] = useState([]);
+  const [questionsLoading, setQuestionsLoading] = useState(false);
+  const [questionsPagination, setQuestionsPagination] = useState({ page: 1, pages: 1, total: 0 });
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [questionText, setQuestionText] = useState('');
+  const [submittingQuestion, setSubmittingQuestion] = useState(false);
+
   // Close share menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -123,11 +131,49 @@ const ProductDetail = () => {
     };
   }, [dispatch, slug]);
 
+  const fetchQuestions = useCallback(async (productId, page = 1) => {
+    setQuestionsLoading(true);
+    try {
+      const { data } = await api.get(`/products/${productId}/questions?page=${page}&limit=5`);
+      if (page === 1) {
+        setQuestions(data.data);
+      } else {
+        setQuestions(prev => [...prev, ...data.data]);
+      }
+      setQuestionsPagination(data.pagination);
+    } catch {
+      // silently fail
+    } finally {
+      setQuestionsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (product?._id) {
       fetchReviews(product._id);
+      fetchQuestions(product._id);
     }
-  }, [product?._id, fetchReviews]);
+  }, [product?._id, fetchReviews, fetchQuestions]);
+
+  const handleSubmitQuestion = async (e) => {
+    e.preventDefault();
+    if (!questionText.trim()) {
+      toast.error('Please write a question');
+      return;
+    }
+    setSubmittingQuestion(true);
+    try {
+      await api.post(`/products/${product._id}/questions`, { question: questionText });
+      toast.success('Question submitted!');
+      setQuestionText('');
+      setShowQuestionForm(false);
+      fetchQuestions(product._id);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit question');
+    } finally {
+      setSubmittingQuestion(false);
+    }
+  };
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
@@ -617,6 +663,103 @@ const ProductDetail = () => {
         )}
 
         {reviewsLoading && reviews.length === 0 && (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Questions & Answers Section */}
+      <div className="mt-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">
+            Questions & Answers {questionsPagination.total > 0 && <span className="text-lg font-normal text-gray-500">({questionsPagination.total})</span>}
+          </h2>
+          {isAuthenticated && (
+            <button
+              onClick={() => setShowQuestionForm(!showQuestionForm)}
+              className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
+            >
+              {showQuestionForm ? 'Cancel' : 'Ask a Question'}
+            </button>
+          )}
+        </div>
+
+        {/* Question Form */}
+        {showQuestionForm && (
+          <form onSubmit={handleSubmitQuestion} className="mb-8 p-6 bg-gray-50 rounded-xl border">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Your Question</label>
+              <textarea
+                value={questionText}
+                onChange={(e) => setQuestionText(e.target.value)}
+                placeholder="What would you like to know about this product?"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[80px] resize-y"
+                maxLength={500}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={submittingQuestion}
+              className="px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium disabled:opacity-50"
+            >
+              {submittingQuestion ? 'Submitting...' : 'Submit Question'}
+            </button>
+          </form>
+        )}
+
+        {!isAuthenticated && (
+          <p className="mb-6 text-gray-500 text-sm">
+            <Link to="/login" className="text-emerald-600 hover:underline">Login</Link> to ask a question.
+          </p>
+        )}
+
+        {/* Questions List */}
+        {questions.length > 0 ? (
+          <div className="space-y-6">
+            {questions.map((q) => (
+              <div key={q._id} className="border-b border-gray-100 pb-6">
+                <div className="flex items-start gap-3">
+                  <span className="text-emerald-600 font-bold text-sm mt-0.5">Q:</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">{q.question}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {q.user?.profile?.firstName || 'User'} - {new Date(q.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                {q.answer?.content ? (
+                  <div className="flex items-start gap-3 mt-3 ml-6">
+                    <span className="text-orange-500 font-bold text-sm mt-0.5">A:</span>
+                    <div className="flex-1 p-3 bg-orange-50 border border-orange-100 rounded-lg">
+                      <p className="text-sm text-gray-700">{q.answer.content}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Seller - {new Date(q.answer.answeredAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400 mt-2 ml-9">Awaiting seller response</p>
+                )}
+              </div>
+            ))}
+
+            {questionsPagination.page < questionsPagination.pages && (
+              <button
+                onClick={() => fetchQuestions(product._id, questionsPagination.page + 1)}
+                disabled={questionsLoading}
+                className="w-full py-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+              >
+                {questionsLoading ? 'Loading...' : 'Load More Questions'}
+              </button>
+            )}
+          </div>
+        ) : (
+          !questionsLoading && <p className="text-gray-400 text-sm">No questions yet. Be the first to ask!</p>
+        )}
+
+        {questionsLoading && questions.length === 0 && (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
           </div>
