@@ -45,9 +45,13 @@ const getProducts = async (req, res, next) => {
       if (req.query.maxPrice) query['price.amount'].$lte = parseFloat(req.query.maxPrice);
     }
 
-    // Search
+    // Search - use regex for partial matching
     if (req.query.search) {
-      query.$text = { $search: req.query.search };
+      const searchRegex = new RegExp(req.query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      query.$or = [
+        { name: searchRegex },
+        { tags: searchRegex },
+      ];
     }
 
     // Sort

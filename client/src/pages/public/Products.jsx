@@ -80,15 +80,18 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
+    const searchQuery = searchParams.get('search');
     const params = {
       page: pagination.page,
       limit: pagination.limit,
-      ...filters,
     };
 
-    const searchQuery = searchParams.get('search');
     if (searchQuery) {
+      // When searching, only apply search - ignore other filters
       params.search = searchQuery;
+    } else {
+      // No search, apply all filters
+      Object.assign(params, filters);
     }
 
     dispatch(fetchProducts(params));
