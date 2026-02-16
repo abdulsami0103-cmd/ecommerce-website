@@ -586,6 +586,19 @@ const ProductDetail = () => {
                 </div>
                 {review.title && <p className="font-semibold text-sm mb-1">{review.title}</p>}
                 <p className="text-gray-600 text-sm">{review.comment}</p>
+
+                {/* Vendor Reply */}
+                {review.vendorReply && (
+                  <div className="mt-3 ml-6 p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold text-emerald-700">
+                        {review.vendorReply.vendor?.storeName || 'Seller'} replied
+                      </span>
+                      <span className="text-xs text-gray-400">{new Date(review.vendorReply.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <p className="text-sm text-gray-700">{review.vendorReply.content}</p>
+                  </div>
+                )}
               </div>
             ))}
 

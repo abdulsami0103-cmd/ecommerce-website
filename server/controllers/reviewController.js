@@ -1,4 +1,5 @@
 const Review = require('../models/Review');
+const ReviewReply = require('../models/ReviewReply');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
@@ -19,6 +20,22 @@ const getProductReviews = async (req, res, next) => {
 
     const total = await Review.countDocuments({ product: req.params.productId });
 
+    // Fetch vendor replies for these reviews
+    const reviewIds = reviews.map(r => r._id);
+    const replies = await ReviewReply.find({ review: { $in: reviewIds }, isPublic: true })
+      .populate('vendor', 'storeName');
+
+    const replyMap = {};
+    replies.forEach(reply => {
+      replyMap[reply.review.toString()] = reply;
+    });
+
+    const reviewsWithReplies = reviews.map(review => {
+      const obj = review.toObject();
+      obj.vendorReply = replyMap[review._id.toString()] || null;
+      return obj;
+    });
+
     // Get rating breakdown
     const ratingBreakdown = await Review.aggregate([
       { $match: { product: require('mongoose').Types.ObjectId(req.params.productId) } },
@@ -28,7 +45,7 @@ const getProductReviews = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: reviews,
+      data: reviewsWithReplies,
       ratingBreakdown,
       pagination: {
         page,
