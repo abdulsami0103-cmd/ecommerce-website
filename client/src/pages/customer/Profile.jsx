@@ -4,7 +4,77 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 
 import { updateProfile } from '../../store/slices/authSlice';
+import authService from '../../services/authService';
 import { Input, Button } from '../../components/common';
+
+const ChangePasswordForm = () => {
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (passwordData.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters');
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      await authService.updatePassword(passwordData.currentPassword, passwordData.newPassword);
+      toast.success('Password updated successfully');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update password');
+    }
+    setPasswordLoading(false);
+  };
+
+  return (
+    <div className="card p-6 mt-6">
+      <h2 className="text-lg font-semibold mb-6">Change Password</h2>
+      <form onSubmit={handlePasswordSubmit} className="space-y-6">
+        <Input
+          label="Current Password"
+          type="password"
+          name="currentPassword"
+          value={passwordData.currentPassword}
+          onChange={handlePasswordChange}
+          required
+        />
+        <Input
+          label="New Password"
+          type="password"
+          name="newPassword"
+          value={passwordData.newPassword}
+          onChange={handlePasswordChange}
+          required
+        />
+        <Input
+          label="Confirm New Password"
+          type="password"
+          name="confirmNewPassword"
+          value={passwordData.confirmNewPassword}
+          onChange={handlePasswordChange}
+          required
+        />
+        <Button type="submit" loading={passwordLoading}>Update Password</Button>
+      </form>
+    </div>
+  );
+};
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -123,28 +193,7 @@ const Profile = () => {
         </div>
 
         {/* Change Password Section */}
-        <div className="card p-6 mt-6">
-          <h2 className="text-lg font-semibold mb-6">Change Password</h2>
-
-          <form className="space-y-6">
-            <Input
-              label="Current Password"
-              type="password"
-              name="currentPassword"
-            />
-            <Input
-              label="New Password"
-              type="password"
-              name="newPassword"
-            />
-            <Input
-              label="Confirm New Password"
-              type="password"
-              name="confirmNewPassword"
-            />
-            <Button type="submit">Update Password</Button>
-          </form>
-        </div>
+        <ChangePasswordForm />
       </div>
     </div>
   );

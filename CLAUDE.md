@@ -67,21 +67,24 @@ Should I proceed? (Yes/No)
 
 ### Server Details:
 - **Domain**: marketplace.byredstone.com
-- **Server IP**: 65.109.60.53
-- **SSH**: `ssh -p 2242 redstone@65.109.60.53`
-- **Project Path**: `/var/ww/project`
+- **Host Server IP**: 135.181.162.188
+- **LXC Container ID**: 107
+- **Hostname**: marketplace
+- **Container IP**: 10.10.10.242
+- **SSH Access**: `ssh root@135.181.162.188 "pct exec 107 -- bash"`
+- **Project Path**: `/var/www/project`
 - **PM2 Process**: `ecommerce-backend`
 
 ### Deployment Workflow (After EVERY code change):
 1. **Push to GitHub** from local MacBook
-2. **Pull from GitHub** on server
+2. **Pull from GitHub** on server (inside LXC container)
 3. **If frontend (client/) changed**: Rebuild client (`npm run build`) on server
 4. **Restart PM2** backend: `pm2 restart ecommerce-backend`
 5. **Verify** server is running: `pm2 status`
 
 ### Deployment Commands (run on server via SSH):
 ```bash
-ssh -p 2242 redstone@65.109.60.53 "cd /var/ww/project && git pull origin main && npm run build && pm2 restart ecommerce-backend && pm2 status"
+ssh root@135.181.162.188 "pct exec 107 -- bash -c 'cd /var/www/project && git pull origin main && npm run build && pm2 restart ecommerce-backend && pm2 status'"
 ```
 
 ### Important:
@@ -90,6 +93,16 @@ ssh -p 2242 redstone@65.109.60.53 "cd /var/ww/project && git pull origin main &&
 - ALWAYS restart PM2 after pulling changes
 - If only backend changes: skip `npm run build`, just restart PM2
 - If frontend changes: MUST run `npm run build` before PM2 restart
+- Server access is via LXC container (pct exec 107) on host 135.181.162.188
+
+## Website & Mobile App Connectivity Rules
+- Website and Mobile App MUST use the **same backend server and database**
+- Production backend: `https://marketplace.byredstone.com`
+- Both website and mobile app connect to the SAME production server
+- Mobile app API base: `https://marketplace.byredstone.com/api`
+- Socket.io: `https://marketplace.byredstone.com`
+- Any changes to backend APIs must work for BOTH website and mobile app
+- User accounts, orders, products, chat - everything is shared between website and app
 
 ## Language Preference
 - User communicates in Roman Urdu (Urdu written in English)

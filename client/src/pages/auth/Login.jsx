@@ -3,8 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
-import { login, clearError } from '../../store/slices/authSlice';
+import { googleLogin, clearError } from '../../store/slices/authSlice';
 import { Input, Button } from '../../components/common';
 
 const Login = () => {
@@ -13,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -23,11 +24,17 @@ const Login = () => {
   const from = location.state?.from?.pathname || '/';
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
+      if (user.isVerified === false) {
+        navigate('/verify-email');
+        return;
+      }
       toast.success(t('auth.loginSuccess'));
-      navigate(from, { replace: true });
+      const redirectUrl = user.role === 'admin' ? '/admin' :
+                          user.role === 'vendor' ? '/vendor/dashboard' : from;
+      navigate(redirectUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate, from, t]);
+  }, [isAuthenticated, user, navigate, from, t]);
 
   useEffect(() => {
     if (error) {
@@ -43,31 +50,31 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Trim inputs to remove any whitespace
     const credentials = {
       email: formData.email.trim().toLowerCase(),
-      password: formData.password
+      password: formData.password,
     };
 
-    console.log('Login attempt:', credentials.email, 'Password length:', credentials.password.length);
-
-    // Direct API call
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
       const data = await response.json();
-      console.log('API Response:', data);
 
       if (data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        toast.success('Login successful!');
-        const redirectUrl = data.user.role === 'admin' ? '/admin' :
-                          data.user.role === 'vendor' ? '/vendor/dashboard' : '/';
-        window.location.href = redirectUrl;
+
+        if (data.user.isVerified === false) {
+          window.location.href = '/verify-email';
+        } else {
+          toast.success('Login successful!');
+          const redirectUrl = data.user.role === 'admin' ? '/admin' :
+                              data.user.role === 'vendor' ? '/vendor/dashboard' : '/';
+          window.location.href = redirectUrl;
+        }
       } else {
         toast.error(data.message || 'Invalid credentials');
       }
@@ -75,6 +82,10 @@ const Login = () => {
       console.error('Login error:', err);
       toast.error('Login failed. Please try again.');
     }
+  };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    dispatch(googleLogin({ idToken: credentialResponse.credential }));
   };
 
   return (
@@ -90,6 +101,27 @@ const Login = () => {
         </div>
 
         <div className="card p-8">
+          {/* Google Sign-In */}
+          <div className="flex justify-center mb-4">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error('Google Sign-In failed')}
+              size="large"
+              width="100%"
+              text="signin_with"
+              shape="rectangular"
+            />
+          </div>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or login with email</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
               label={t('auth.email')}

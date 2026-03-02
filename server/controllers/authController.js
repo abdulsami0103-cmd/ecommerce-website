@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const crypto = require('crypto');
+const emailService = require('../services/emailService');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -26,6 +27,18 @@ const register = async (req, res, next) => {
         lastName,
       },
     });
+
+    // Generate and send verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.emailVerificationCode = crypto.createHash('sha256').update(verificationCode).digest('hex');
+    user.emailVerificationExpire = Date.now() + 10 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    emailService.send(
+      user.email,
+      'Verify Your Email - MarketHub',
+      buildVerificationEmail(verificationCode, user.profile.firstName)
+    ).catch(err => console.error('Verification email failed:', err));
 
     sendTokenResponse(user, 201, res);
   } catch (error) {
@@ -60,6 +73,14 @@ const login = async (req, res, next) => {
       });
     }
 
+    // Google-only users can't login with password
+    if (user.authProvider === 'google' && !user.password) {
+      return res.status(401).json({
+        success: false,
+        message: 'This account uses Google Sign-In. Please login with Google.',
+      });
+    }
+
     console.log('User found:', user.email, 'Has password:', !!user.password);
 
     // Check password
@@ -76,6 +97,135 @@ const login = async (req, res, next) => {
     sendTokenResponse(user, 200, res);
   } catch (error) {
     console.error('Login error:', error);
+    next(error);
+  }
+};
+
+// @desc    Google Sign-In / Sign-Up
+// @route   POST /api/auth/google
+// @access  Public
+const googleAuth = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google ID token is required',
+      });
+    }
+
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: [
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_IOS_CLIENT_ID,
+      ].filter(Boolean),
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, given_name, family_name, picture } = payload;
+
+    // Check if user already exists by googleId or email
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user) {
+      // Existing user: link Google if not already linked
+      if (!user.googleId) {
+        user.googleId = googleId;
+      }
+      if (!user.isVerified) {
+        user.isVerified = true;
+      }
+      if (picture && !user.profile.avatar) {
+        user.profile.avatar = picture;
+      }
+      await user.save({ validateBeforeSave: false });
+    } else {
+      // New user: auto-create
+      user = await User.create({
+        email,
+        googleId,
+        authProvider: 'google',
+        isVerified: true,
+        profile: {
+          firstName: given_name || '',
+          lastName: family_name || '',
+          avatar: picture || '',
+        },
+      });
+    }
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    if (error.message?.includes('Token used too late') || error.message?.includes('Invalid token') || error.message?.includes('Wrong number of segments')) {
+      return res.status(401).json({ success: false, message: 'Invalid Google token' });
+    }
+    next(error);
+  }
+};
+
+// @desc    Send email verification code
+// @route   POST /api/auth/send-verification
+// @access  Private
+const sendVerificationCode = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (user.isVerified) {
+      return res.status(400).json({ success: false, message: 'Email already verified' });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    user.emailVerificationCode = crypto.createHash('sha256').update(code).digest('hex');
+    user.emailVerificationExpire = Date.now() + 10 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    await emailService.send(
+      user.email,
+      'Verify Your Email - MarketHub',
+      buildVerificationEmail(code, user.profile.firstName)
+    );
+
+    res.status(200).json({ success: true, message: 'Verification code sent to email' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Verify email with code
+// @route   POST /api/auth/verify-email
+// @access  Private
+const verifyEmail = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({ success: false, message: 'Verification code is required' });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (user.isVerified) {
+      return res.status(400).json({ success: false, message: 'Email already verified' });
+    }
+
+    const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+
+    if (user.emailVerificationCode !== hashedCode || user.emailVerificationExpire < Date.now()) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
+    }
+
+    user.isVerified = true;
+    user.emailVerificationCode = undefined;
+    user.emailVerificationExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({ success: true, message: 'Email verified successfully' });
+  } catch (error) {
     next(error);
   }
 };
@@ -124,12 +274,13 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // In production, send email with reset link
-    // For now, return token (development only)
+    // Send password reset email
+    emailService.sendPasswordReset(user.email, resetToken)
+      .catch(err => console.error('Password reset email failed:', err));
+
     res.status(200).json({
       success: true,
       message: 'Password reset email sent',
-      // Remove this in production:
       ...(process.env.NODE_ENV === 'development' && { resetToken }),
     });
   } catch (error) {
@@ -197,6 +348,30 @@ const updatePassword = async (req, res, next) => {
   }
 };
 
+// Helper: Build verification email HTML
+const buildVerificationEmail = (code, firstName) => {
+  const platformName = process.env.PLATFORM_NAME || 'MarketHub';
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; padding: 20px 0;">
+        <h1 style="color: #10b981; margin: 0;">${platformName}</h1>
+      </div>
+      <div style="background: #f9fafb; border-radius: 12px; padding: 30px; text-align: center;">
+        <h2 style="color: #111827; margin-top: 0;">Verify Your Email</h2>
+        <p style="color: #6b7280;">Hi ${firstName || 'there'},</p>
+        <p style="color: #6b7280;">Use the code below to verify your email address:</p>
+        <div style="background: #fff; border: 2px dashed #10b981; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <span style="font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #111827;">${code}</span>
+        </div>
+        <p style="color: #9ca3af; font-size: 14px;">This code expires in 10 minutes.</p>
+      </div>
+      <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">
+        If you didn't create an account, you can safely ignore this email.
+      </p>
+    </div>
+  `;
+};
+
 // Helper function to send token response
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
@@ -209,6 +384,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       email: user.email,
       role: user.role,
       profile: user.profile,
+      isVerified: user.isVerified,
+      authProvider: user.authProvider || 'local',
       preferredLanguage: user.preferredLanguage,
       preferredCurrency: user.preferredCurrency,
     },
@@ -218,6 +395,9 @@ const sendTokenResponse = (user, statusCode, res) => {
 module.exports = {
   register,
   login,
+  googleAuth,
+  sendVerificationCode,
+  verifyEmail,
   getMe,
   forgotPassword,
   resetPassword,

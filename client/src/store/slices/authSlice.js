@@ -43,6 +43,21 @@ export const login = createAsyncThunk(
   }
 );
 
+// Google Sign-In
+export const googleLogin = createAsyncThunk(
+  'auth/googleLogin',
+  async ({ idToken }, { rejectWithValue }) => {
+    try {
+      const response = await authService.googleAuth(idToken);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Google Sign-In failed'
+      );
+    }
+  }
+);
+
 // Get current user
 export const getMe = createAsyncThunk(
   'auth/getMe',
@@ -73,6 +88,15 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+const handleAuthFulfilled = (state, action) => {
+  state.loading = false;
+  state.isAuthenticated = true;
+  state.user = action.payload.user;
+  state.token = action.payload.token;
+  localStorage.setItem('user', JSON.stringify(action.payload.user));
+  localStorage.setItem('token', action.payload.token);
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -88,6 +112,12 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    setUserVerified: (state) => {
+      if (state.user) {
+        state.user.isVerified = true;
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -96,14 +126,7 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('token', action.payload.token);
-      })
+      .addCase(register.fulfilled, handleAuthFulfilled)
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
@@ -113,15 +136,18 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem('token', action.payload.token);
-      })
+      .addCase(login.fulfilled, handleAuthFulfilled)
       .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Google Login
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, handleAuthFulfilled)
+      .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -153,5 +179,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setUserVerified } = authSlice.actions;
 export default authSlice.reducer;

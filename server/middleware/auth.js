@@ -69,4 +69,16 @@ const optionalAuth = async (req, res, next) => {
   next();
 };
 
-module.exports = { protect, authorize, optionalAuth };
+// Require email verification for sensitive actions
+const requireVerified = (req, res, next) => {
+  if (!req.user.isVerified) {
+    return res.status(403).json({
+      success: false,
+      message: 'Please verify your email first',
+      code: 'EMAIL_NOT_VERIFIED',
+    });
+  }
+  next();
+};
+
+module.exports = { protect, authorize, optionalAuth, requireVerified };

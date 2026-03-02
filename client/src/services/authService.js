@@ -40,6 +40,21 @@ const authService = {
     });
     return response.data;
   },
+
+  googleAuth: async (idToken) => {
+    const response = await api.post('/auth/google', { idToken });
+    return response.data;
+  },
+
+  verifyEmail: async (code) => {
+    const response = await api.post('/auth/verify-email', { code });
+    return response.data;
+  },
+
+  sendVerificationCode: async () => {
+    const response = await api.post('/auth/send-verification');
+    return response.data;
+  },
 };
 
 export default authService;

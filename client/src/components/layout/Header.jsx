@@ -181,6 +181,13 @@ const Header = () => {
                     >
                       Rewards & Referrals
                     </Link>
+                    <Link
+                      to="/coupons"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      My Coupons
+                    </Link>
                     {user?.role === 'vendor' && (
                       <Link
                         to="/vendor/dashboard"

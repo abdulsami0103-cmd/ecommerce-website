@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
-import { register, clearError } from '../../store/slices/authSlice';
+import { register, googleLogin, clearError } from '../../store/slices/authSlice';
 import { Input, Button } from '../../components/common';
 
 const Register = () => {
@@ -12,7 +13,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -25,11 +26,17 @@ const Register = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (isAuthenticated) {
-      toast.success(t('auth.registerSuccess'));
-      navigate('/');
+    if (isAuthenticated && user) {
+      if (user.isVerified === false) {
+        navigate('/verify-email');
+      } else {
+        toast.success(t('auth.registerSuccess'));
+        const redirectUrl = user.role === 'admin' ? '/admin' :
+                            user.role === 'vendor' ? '/vendor/dashboard' : '/';
+        navigate(redirectUrl);
+      }
     }
-  }, [isAuthenticated, navigate, t]);
+  }, [isAuthenticated, user, navigate, t]);
 
   useEffect(() => {
     if (error) {
@@ -40,7 +47,6 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error when user types
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: '' });
     }
@@ -87,6 +93,10 @@ const Register = () => {
     }
   };
 
+  const handleGoogleSuccess = (credentialResponse) => {
+    dispatch(googleLogin({ idToken: credentialResponse.credential }));
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
       <div className="max-w-md w-full">
@@ -100,6 +110,27 @@ const Register = () => {
         </div>
 
         <div className="card p-8">
+          {/* Google Sign-In */}
+          <div className="flex justify-center mb-4">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error('Google Sign-In failed')}
+              size="large"
+              width="100%"
+              text="signup_with"
+              shape="rectangular"
+            />
+          </div>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or register with email</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <Input

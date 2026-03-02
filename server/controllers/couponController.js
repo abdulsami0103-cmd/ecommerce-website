@@ -505,6 +505,52 @@ exports.getAutoApplyCoupons = async (req, res) => {
 };
 
 /**
+ * @desc    Get available coupons for customers
+ * @route   GET /api/coupons/available
+ * @access  Customer (protected)
+ */
+exports.getAvailableCoupons = async (req, res) => {
+  try {
+    const now = new Date();
+
+    const coupons = await Coupon.find({
+      isActive: true,
+      startsAt: { $lte: now },
+      expiresAt: { $gt: now },
+      $or: [
+        { usageLimit: null },
+        { $expr: { $lt: ['$usedCount', '$usageLimit'] } },
+      ],
+    })
+      .select('code name description type value scope minPurchase maxDiscount expiresAt firstOrderOnly autoApply vendor')
+      .populate('vendor', 'storeName')
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    // Filter out coupons the user has already maxed out
+    const userId = req.user._id;
+    const available = coupons.filter((coupon) => {
+      const userUsage = coupon.usedBy
+        ? coupon.usedBy.find((u) => u.user && u.user.toString() === userId.toString())
+        : null;
+      return !userUsage || userUsage.count < coupon.perUserLimit;
+    });
+
+    res.json({
+      success: true,
+      count: available.length,
+      data: available,
+    });
+  } catch (error) {
+    console.error('Error fetching available coupons:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching coupons',
+    });
+  }
+};
+
+/**
  * @desc    Update coupon
  * @route   PUT /api/coupons/:id
  * @access  Admin/Vendor

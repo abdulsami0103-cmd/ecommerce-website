@@ -9,6 +9,7 @@ const {
   validateCouponCode,
   applyCoupon,
   getAutoApplyCoupons,
+  getAvailableCoupons,
   updateCoupon,
   deleteCoupon,
   toggleCouponStatus,
@@ -20,6 +21,7 @@ const {
 router.get('/coupons/validate/:code', validateCouponCode);
 
 // Customer routes (protected)
+router.get('/coupons/available', protect, getAvailableCoupons);
 router.post('/coupons/apply', protect, applyCoupon);
 router.get('/coupons/auto-apply', protect, getAutoApplyCoupons);
 

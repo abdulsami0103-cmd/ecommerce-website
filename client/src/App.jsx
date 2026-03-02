@@ -19,10 +19,14 @@ import ShippingInfo from './pages/public/ShippingInfo';
 import FAQ from './pages/public/FAQ';
 import Contact from './pages/public/Contact';
 import ReturnsRefunds from './pages/public/ReturnsRefunds';
+import HelpCenter from './pages/public/HelpCenter';
+import Terms from './pages/public/Terms';
+import Privacy from './pages/public/Privacy';
 
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import VerifyEmail from './pages/auth/VerifyEmail';
 
 // Customer Pages
 import Profile from './pages/customer/Profile';
@@ -34,6 +38,7 @@ import CustomerTickets from './pages/customer/Tickets';
 import CustomerTicketDetail from './pages/customer/TicketDetail';
 import CustomerMessages from './pages/customer/Messages';
 import CustomerRMARequests from './pages/customer/RMARequests';
+import CustomerCoupons from './pages/customer/Coupons';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/Dashboard';
@@ -125,6 +130,7 @@ function App() {
       {/* Auth Routes (no layout) */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
       {/* Public Routes */}
       <Route
@@ -207,6 +213,30 @@ function App() {
           </Layout>
         }
       />
+      <Route
+        path="/help"
+        element={
+          <Layout>
+            <HelpCenter />
+          </Layout>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <Layout>
+            <Terms />
+          </Layout>
+        }
+      />
+      <Route
+        path="/privacy"
+        element={
+          <Layout>
+            <Privacy />
+          </Layout>
+        }
+      />
 
       {/* Protected Customer Routes */}
       <Route
@@ -255,6 +285,16 @@ function App() {
           <ProtectedRoute>
             <Layout>
               <Rewards />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/coupons"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <CustomerCoupons />
             </Layout>
           </ProtectedRoute>
         }

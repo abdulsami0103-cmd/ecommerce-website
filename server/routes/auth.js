@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
+const rateLimit = require('express-rate-limit');
 const validate = require('../middleware/validate');
 const { protect } = require('../middleware/auth');
 
 const {
   register,
   login,
+  googleAuth,
+  sendVerificationCode,
+  verifyEmail,
   getMe,
   forgotPassword,
   resetPassword,
@@ -28,9 +32,19 @@ const loginValidation = [
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
+// Rate limiter for verification emails
+const verificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: 'Too many verification requests, try again later' },
+});
+
 // Routes
 router.post('/register', registerValidation, validate, register);
 router.post('/login', loginValidation, validate, login);
+router.post('/google', googleAuth);
+router.post('/send-verification', protect, verificationLimiter, sendVerificationCode);
+router.post('/verify-email', protect, verifyEmail);
 router.get('/me', protect, getMe);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:resetToken', resetPassword);
